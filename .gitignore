@@ -1,3 +1,5 @@
 build
 source
 .vscode
+
+tests/fat12
