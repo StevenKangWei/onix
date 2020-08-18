@@ -30,7 +30,7 @@ read_success:
     call bios_print
     mov si, MESSAGE_SUCCESS
     call bios_print
-    jmp MEMORY_SEGMENT:MEMORY_OFFSET
+    jmp $
 
 read_not_found:
     mov si, MESSAGE_RETURN
