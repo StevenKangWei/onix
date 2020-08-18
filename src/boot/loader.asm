@@ -50,4 +50,4 @@ MESSAGE_LOADING db "Onix OS is Loading...", 0
 MESSAGE_FAILURE db "Failure to read kernel...", 0
 MESSAGE_SUCCESS db "Success to read kernel...", 0
 MESSAGE_NOFOUND db "Kernel is not found...", 0
-MESSAGE_FOUND db "Found kernel in root directory...", 0
+MESSAGE_FOUND db "Loading kernel from disk...", 0

@@ -1,13 +1,24 @@
 BUILD:=../build
+LIB:=./lib
+INCLUDE:=./include
+KERNEL:=./kernel
 BOOT:=./boot
+BOOT_INC:=./boot/include
+FLOPPY:=/mnt/floppy/
 
 ASM=nasm
 CC=gcc
 LD=ld
-BXIMAGE=bximage
 
 ASM_BIN_FLAGS= -I boot/include/
 ASM_KERNEL_FLAGS= -I include/ -f elf
+
+ENTRYPOINT	= 0x30400
+
+ASMFLAGS= -I $(INCLUDE) -f elf
+BOOTFLAGS= -I $(BOOT_INC) -f bin
+CFLAGS = -I $(INCLUDE) -c -fno-builtin -m32 -fno-stack-protector 
+LDFLAGS = -m elf_i386 -s -Ttext $(ENTRYPOINT) 
 
 .PHONY: image clean qemu bochs
 
@@ -17,11 +28,21 @@ $(BUILD)/boot.bin: $(BOOT)/boot.asm
 $(BUILD)/loader.bin: $(BOOT)/loader.asm
 	$(ASM) $(ASM_BIN_FLAGS) -o $@ $<
 
-$(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin
+$(BUILD)/kernel.a: $(KERNEL)/kernel.asm
+	$(ASM) $(ASMFLAGS) $< -o $(BUILD)/$@
+
+$(BUILD)/kernel.o: $(KERNEL)/kernel.c
+	$(CC) $(CFLAGS) $< -o $(BUILD)/$@
+
+$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o
+	$(LD) $(LDFLAGS) $^ -o $(BUILD)/$@
+
+$(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
 	dd if=/dev/zero of=$@ bs=512 count=2880
 	dd if=$< of=$(BUILD)/$@ bs=512 count=1 conv=notrunc
 	sudo mount -o loop $(BUILD)/$@ /mnt/floppy
 	sudo cp $(BUILD)/loader.bin /mnt/floppy -v
+	sudo cp $(BUILD)/kernel.bin /mnt/floppy -v
 	sudo umount /mnt/floppy
 
 image: $(BUILD)/onix.img
@@ -36,3 +57,5 @@ bochs: $(BUILD)/onix.img
 clean:
 	rm -rf $(BUILD)/onix.img
 	rm -rf $(BUILD)/*.bin
+	rm -rf $(BUILD)/*.a
+	rm -rf $(BUILD)/*.o
