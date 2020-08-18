@@ -13,12 +13,10 @@ LD=ld
 ASM_BIN_FLAGS= -I boot/include/
 ASM_KERNEL_FLAGS= -I include/ -f elf
 
-ENTRYPOINT	= 0x30000
-
 ASMFLAGS= -I $(INCLUDE) -f elf
 BOOTFLAGS= -I $(BOOT_INC) -f bin
 CFLAGS = -I $(INCLUDE) -c -fno-builtin -m32 -fno-stack-protector 
-LDFLAGS = -m elf_i386 -s -Ttext $(ENTRYPOINT) 
+LDFLAGS = -m elf_i386 -s 
 
 .PHONY: image clean qemu bochs
 
