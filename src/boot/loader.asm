@@ -11,36 +11,25 @@ _start:
     BIOS_SETUP_STACK BASE_STACK
     BIOS_CLEAR_SCREEN
 
-    mov si, MESSAGE_LOADING
-    call bios_print
+    BIOS_PRINT MESSAGE_LOADING
 
     FAT12_READ_FILE
 
     jmp $
 
 read_failure:
-    mov si, MESSAGE_RETURN
-    call bios_print
-    mov si, MESSAGE_FAILURE
-    call bios_print
-    jmp $
-
-read_success:
-    mov si, MESSAGE_RETURN
-    call bios_print
-    mov si, MESSAGE_SUCCESS
-    call bios_print
-
-    BIOS_CLOSE_FLOPPY_MOTOR
-
+    BIOS_LN_PRINT MESSAGE_FAILURE
     jmp $
 
 read_not_found:
-    mov si, MESSAGE_RETURN
-    call bios_print
-    mov si, MESSAGE_NOFOUND
-    call bios_print
+    BIOS_LN_PRINT MESSAGE_NOFOUND
     jmp $
+
+read_success:
+    BIOS_LN_PRINT MESSAGE_SUCCESS
+    BIOS_CLOSE_FLOPPY_MOTOR
+    jmp $
+
 
 BIOS_PRINT_FUNCTION
 
@@ -49,9 +38,11 @@ MEMORY_OFFSET   equ KERNEL_OFFSET
 
 FILENAME db "KERNEL  BIN", 0
 FILESIZE dd 0
-MESSAGE_RETURN db 13, 10, 0
-MESSAGE_LOADING db "Onix OS is Loading...", 0
-MESSAGE_FAILURE db "Failure to read kernel...", 0
-MESSAGE_SUCCESS db "Success to read kernel...", 0
-MESSAGE_NOFOUND db "Kernel is not found...", 0
-MESSAGE_FOUND db "Loading kernel from disk...", 0
+MESSAGE_RETURN              db 13, 10, 0
+MESSAGE_LOADING             db "Onix OS is Loading...", 0
+MESSAGE_FAILURE             db "Failure to read kernel...", 0
+MESSAGE_SUCCESS             db "Success to read kernel...", 0
+MESSAGE_NOFOUND             db "Kernel is not found...", 0
+MESSAGE_FOUND               db "Loading kernel from disk...", 0
+MESSAGE_ENTER_PROTECT_MODE  db "Kernel is entering protected mode...", 0
+MESSAGE_ENTER_REAL_MODE     db "Kernel is back to real mode...", 0

@@ -13,7 +13,7 @@ LD=ld
 ASM_BIN_FLAGS= -I boot/include/
 ASM_KERNEL_FLAGS= -I include/ -f elf
 
-ENTRYPOINT	= 0x30400
+ENTRYPOINT	= 0x30000
 
 ASMFLAGS= -I $(INCLUDE) -f elf
 BOOTFLAGS= -I $(BOOT_INC) -f bin

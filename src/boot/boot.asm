@@ -11,16 +11,12 @@ _start:
     BIOS_SETUP_STACK BASE_STACK
     BIOS_CLEAR_SCREEN
 
-    mov si, MESSAGE_LOADING
-    call bios_print
+    BIOS_PRINT MESSAGE_LOADING
 
     FAT12_READ_FILE
 
 read_failure:
-    mov si, MESSAGE_RETURN
-    call bios_print
-    mov si, MESSAGE_FAILURE
-    call bios_print
+    BIOS_LN_PRINT MESSAGE_FAILURE
     jmp $
 
 read_success:

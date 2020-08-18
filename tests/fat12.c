@@ -1,39 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define true 1
-#define false 0
-
-#define PACKED __attribute__((packed))
-
-typedef unsigned short ushort;
-typedef unsigned char uchar;
-typedef unsigned int uint;
-typedef uchar bool;
+#include "type.h"
 
 typedef struct FAT12Header
 {
-    uchar BS_JMP[3];        // BIOS JMP instruction
-    uchar BS_OEMName[8];    // OEM字符串，必须为8个字符，不足以空格填空
-    ushort BPB_BytsPerSec;  // 每扇区字节数
-    uchar BPB_SecPerClus;   // 每簇占用的扇区数
-    ushort BPB_RsvdSecCnt;  // Boot占用的扇区数
-    uchar BPB_NumFATs;      // FAT表的记录数
-    ushort BPB_RootEntCnt;  // 最大根目录文件数
-    ushort BPB_TotSec16;    // 每个FAT占用扇区数
-    uchar BPB_Media;        // 媒体描述符
-    ushort BPB_FATSz16;     // 每个FAT占用扇区数
-    ushort BPB_SecPerTrk;   // 每个磁道扇区数
-    ushort BPB_NumHeads;    // 磁头数
-    uint BPB_HiddSec;       // 隐藏扇区数
-    uint BPB_TotSec32;      // 如果BPB_TotSec16是0，则在这里记录
-    uchar BS_DrvNum;        // 中断13的驱动器号
-    uchar BS_Reserved1;     // 未使用
-    uchar BS_BootSig;       // 扩展引导标志
-    uint BS_VolID;          // 卷序列号
-    char BS_VolLab[11];     // 卷标，必须是11个字符，不足以空格填充
-    char BS_FileSysType[8]; // 文件系统类型，必须是8个字符，不足填充空格
+    uchar BS_JMP[3];
+    uchar BS_OEMName[8];
+    ushort BPB_BytsPerSec;
+    uchar BPB_SecPerClus;
+    ushort BPB_RsvdSecCnt;
+    uchar BPB_NumFATs;
+    ushort BPB_RootEntCnt;
+    ushort BPB_TotSec16;
+    uchar BPB_Media;
+    ushort BPB_FATSz16;
+    ushort BPB_SecPerTrk;
+    ushort BPB_NumHeads;
+    uint BPB_HiddSec;
+    uint BPB_TotSec32;
+    uchar BS_DrvNum;
+    uchar BS_Reserved1;
+    uchar BS_BootSig;
+    uint BS_VolID;
+    char BS_VolLab[11];
+    char BS_FileSysType[8];
 } PACKED FAT12Header;
 
 #define FAT12_ATTR_HIDDEN 0x27

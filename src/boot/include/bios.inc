@@ -28,6 +28,8 @@
 %endmacro
 
 %macro BIOS_PRINT_FUNCTION 0
+%ifndef BIOS_PRINT_FUNCTION
+%define BIOS_PRINT_FUNCTION
 bios_print:
     cld
 bios_print_loop:
@@ -39,6 +41,19 @@ bios_print_loop:
     jmp bios_print_loop
 bios_print_done:
     ret
+%endif
+%endmacro
+
+%macro BIOS_PRINT 1
+mov si, %1
+call bios_print
+%endmacro
+
+%macro BIOS_LN_PRINT 1
+mov si, MESSAGE_RETURN
+call bios_print
+mov si, %1
+call bios_print
 %endmacro
 
 %endif
