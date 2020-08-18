@@ -103,6 +103,12 @@ KERNEL_OFFSET   equ 0x0
 
     mov ax, FAT12_ROOT_SECTORS
     and di, 0xffe0
+
+    push eax
+    mov eax, [es : di + 0x1c]; 0x1c offset of filesize
+    mov dword [FILESIZE], eax
+    pop eax
+
     add di, 0x1a
     mov cx, word [es:di]
     push cx
