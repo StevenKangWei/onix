@@ -19,6 +19,13 @@
     int 0x13
 %endmacro
 
+%macro BIOS_CLOSE_FLOPPY_MOTOR 0
+    push dx
+    mov dx, 0x03f2
+    mov al, 0
+    out dx, al
+    pop dx
+%endmacro
 
 %macro BIOS_PRINT_FUNCTION 0
 bios_print:

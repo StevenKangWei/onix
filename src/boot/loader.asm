@@ -30,6 +30,9 @@ read_success:
     call bios_print
     mov si, MESSAGE_SUCCESS
     call bios_print
+
+    BIOS_CLOSE_FLOPPY_MOTOR
+
     jmp $
 
 read_not_found:
