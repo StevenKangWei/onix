@@ -38,12 +38,21 @@ $(BUILD)/sys.o: $(LIB)/sys.asm
 $(BUILD)/io.o: $(KERNEL)/io.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/time.o: $(LIB)/time.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/audio.o: $(LIB)/audio.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/stdio.o: $(LIB)/stdio.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/string.o: $(LIB)/string.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
-	$(BUILD)/stdio.o 
+	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin

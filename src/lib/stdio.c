@@ -1,5 +1,6 @@
 #include <onix/io.h>
 #include <onix/stdio.h>
+#include <onix/audio.h>
 
 u16 get_cursor()
 {
@@ -52,7 +53,36 @@ void put(char character, uchar color)
 
 void putchar(char character)
 {
-    put(character, COLOR_DEFAULT);
+    u16 pos = get_cursor();
+    u16 x = pos % VGA_WIDTH;
+    u16 y = pos / VGA_WIDTH;
+
+    switch (character)
+    {
+    case '\b':
+        x = x >= 1 ? x - 1 : 0;
+        set_cursor(x, y);
+    case '\r':
+        set_cursor(0, y);
+    case '\n':
+        set_cursor(0, y + 1);
+        break;
+    case '\t':
+        //table
+        break;
+    case '\v':
+        // vertial table
+        break;
+    case '\f':
+        // next page
+        break;
+    case '\a':
+        beep();
+        break;
+    default:
+        put(character, COLOR_DEFAULT);
+        break;
+    }
 }
 
 void clear()
