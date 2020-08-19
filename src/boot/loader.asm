@@ -30,7 +30,7 @@ read_success:
     BIOS_CLOSE_FLOPPY_MOTOR
 
     BIOS_CLEAR_SCREEN
-    BIOS_PRINT MESSAGE_ENTER_PROTECT_MODE
+    ;BIOS_PRINT MESSAGE_ENTER_PROTECT_MODE
 
     cli ; no interrupt
     push ds; save real mode

@@ -32,10 +32,18 @@ $(BUILD)/kernel.a: $(KERNEL)/kernel.asm
 $(BUILD)/kernel.o: $(KERNEL)/kernel.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/sys.o: $(LIB)/sys.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
 $(BUILD)/io.o: $(KERNEL)/io.c
 	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o
+$(BUILD)/stdio.o: $(LIB)/stdio.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/kernel.bin: \
+	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
+	$(BUILD)/stdio.o 
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
