@@ -27,13 +27,16 @@ $(BUILD)/loader.bin: $(BOOT)/loader.asm
 	$(ASM) $(ASM_BIN_FLAGS) -o $@ $<
 
 $(BUILD)/kernel.a: $(KERNEL)/kernel.asm
-	$(ASM) $(ASMFLAGS) $< -o $(BUILD)/$@
+	$(ASM) $(ASMFLAGS) $< -o $@
 
 $(BUILD)/kernel.o: $(KERNEL)/kernel.c
-	$(CC) $(CFLAGS) $< -o $(BUILD)/$@
+	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o
-	$(LD) $(LDFLAGS) $^ -o $(BUILD)/$@
+$(BUILD)/io.o: $(KERNEL)/io.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o
+	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
 	dd if=/dev/zero of=$@ bs=512 count=2880
