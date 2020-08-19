@@ -1,3 +1,4 @@
+void _init_kernel();
 void __kernel_entry()
 {
     _init_kernel();
@@ -7,7 +8,14 @@ void __kernel_entry()
 
 void _init_kernel()
 {
+#ifndef ONIX_DEBUG
     clear();
-    char *string = "Hello, Onix!!!\n\a\0";
-    printf(string);
+#endif
+    printf("Hello, Onix!!!\n\0");
+}
+
+int main(int argc, char const *argv[])
+{
+    __kernel_entry();
+    return 0;
 }

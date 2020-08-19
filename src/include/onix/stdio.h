@@ -40,6 +40,7 @@ u16 get_color(int back, int front);
 void put(char character, uchar color);
 
 void putchar(char character);
+void print(const char *string);
 int printf(const char *format, ...);
 
 #endif

@@ -13,9 +13,10 @@ LD=ld
 ASM_BIN_FLAGS= -I boot/include/
 ASM_KERNEL_FLAGS= -I include/ -f elf
 
-ASMFLAGS= -I $(INCLUDE) -f elf
+ASMFLAGS= -I $(INCLUDE) -f elf -g 
 BOOTFLAGS= -I $(BOOT_INC) -f bin
-CFLAGS = -I $(INCLUDE) -c -fno-builtin -m32 -fno-stack-protector 
+CFLAGS = -I $(INCLUDE) -c -fno-builtin -m32 -fno-stack-protector -g 
+
 LDFLAGS = -m elf_i386 -s 
 
 .PHONY: image clean qemu bochs
@@ -50,9 +51,13 @@ $(BUILD)/stdio.o: $(LIB)/stdio.c
 $(BUILD)/string.o: $(LIB)/string.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/stdlib.o: $(LIB)/stdlib.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
-	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o
+	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o \
+	$(BUILD)/stdlib.o 
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
@@ -62,6 +67,16 @@ $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
 	sudo cp $(BUILD)/loader.bin /mnt/floppy -v
 	sudo cp $(BUILD)/kernel.bin /mnt/floppy -v
 	sudo umount /mnt/floppy
+
+debug:CFLAGS = -I $(INCLUDE) -c -m32 -g -fno-stack-protector -DONIX_DEBUG 
+debug:ASMFLAGS = -I $(INCLUDE) -f elf -F dwarf -g 
+debug:LDFLAGS = -m elf_i386 -s 
+debug: \
+	$(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
+	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o \
+	$(BUILD)/stdlib.o 
+	$(CC) -DONIX_DEBUG -m32 $^ -o $(BUILD)/$@ 
+	-
 
 image: $(BUILD)/onix.img
 	-
@@ -77,3 +92,4 @@ clean:
 	rm -rf $(BUILD)/*.bin
 	rm -rf $(BUILD)/*.a
 	rm -rf $(BUILD)/*.o
+	rm -rf $(BUILD)/debug

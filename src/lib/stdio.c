@@ -1,6 +1,9 @@
 #include <onix/io.h>
 #include <onix/stdio.h>
 #include <onix/audio.h>
+#include <onix/type.h>
+#include <onix/stdarg.h>
+#include <onix/stdlib.h>
 
 u16 get_cursor()
 {
@@ -39,6 +42,9 @@ u16 get_color(int back, int front)
 
 void put(char character, uchar color)
 {
+#ifdef ONIX_DEBUG
+    return;
+#endif
     u16 pos = get_cursor();
     volatile char *video = (volatile char *)VGA_ADDRESS + (pos * VGA_BLOCK_SIZE);
     *video++ = character;
@@ -95,11 +101,62 @@ void clear()
     set_cursor(0, 0);
 }
 
+void print(const char *string)
+{
+    while (*string)
+    {
+        putchar(*string);
+        string++;
+    }
+}
+
 int printf(const char *format, ...)
 {
-    int i = 0;
-    while (format[i])
+    char buffer[256];
+    va_list args;
+    va_start(args, format);
+    va_list next = args;
+
+    for (; *format != '\0'; format++)
     {
-        putchar(format[i++]);
+        if (*format != '%')
+        {
+            putchar(*format);
+            continue;
+        }
+
+        format++;
+        switch (*format)
+        {
+        case 'd':
+        case 'i':
+            itoa(va_arg(next, int), buffer, 10);
+            print(buffer);
+            break;
+        case 'u':
+            itoa(va_arg(next, uint), buffer, 10);
+            print(buffer);
+            break;
+        case 'o':
+            itoa(va_arg(next, uint), buffer, 8);
+            print(buffer);
+            break;
+        case 'x':
+        case 'X':
+            itoa(va_arg(next, int), buffer, 16);
+            print(buffer);
+            break;
+        case 'c':
+            putchar(va_arg(next, char));
+            break;
+        case 's':
+            print(va_arg(next, uchar *));
+            break;
+        case '%':
+            putchar('%');
+            break;
+        default:
+            break;
+        }
     }
 }
