@@ -57,10 +57,12 @@ void putchar(char character)
 
 void clear()
 {
-    for (size_t i = VGA_ADDRESS; i < VGA_ADDRESS + VGA_LENGTH; i += VGA_BLOCK_SIZE)
+    set_cursor(0, 0);
+    for (u32 i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
     {
         putchar(' ');
     }
+    set_cursor(0, 0);
 }
 
 int printf(const char *format, ...)

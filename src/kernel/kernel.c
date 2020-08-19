@@ -7,7 +7,7 @@ void __kernel_entry()
 
 void _init_kernel()
 {
-    set_cursor(0, 0);
+    clear();
     char *string = "Hello, Onix!!!\0";
     printf(string);
 }
