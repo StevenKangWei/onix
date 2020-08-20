@@ -1,4 +1,5 @@
 #include <onix/mode.h>
+#include <onix/string.h>
 #include <onix/stdio.h>
 
 void __enter_kernel()
@@ -12,10 +13,8 @@ void __init_kernel()
 #ifndef ONIX_DEBUG
     clear();
 #endif
-    const char string[] = "Hello, Onix!!!\n\0";
+    const char string[] = "Initializing...\n\0";
     printf(string);
-
-    
 }
 
 #ifdef ONIX_DEBUG
