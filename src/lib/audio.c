@@ -1,7 +1,7 @@
 #include <onix/io.h>
 #include <onix/time.h>
 
-static void play(u32 frequence)
+void play(u32 frequence)
 {
     u32 div;
     u8 tmp;
@@ -21,7 +21,7 @@ static void play(u32 frequence)
 }
 
 //make it shutup
-static void mute()
+void mute()
 {
     u8 tmp = inb(0x61) & 0xFC;
     outb(0x61, tmp);

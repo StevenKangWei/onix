@@ -139,6 +139,14 @@ KERNEL_ADDRESS   equ 0x80400
     add ax, dx
     add ax, FAT12_SECTOR_INDEX_DELTA
     add bx, [BPB_BytsPerSec]
+    jnc %%read_file
+
+%%next_segment
+    push ax
+    mov ax, es
+    add ax, 0x1000
+    mov es, ax
+    pop ax
     jmp %%read_file
 
 %%print_dot:

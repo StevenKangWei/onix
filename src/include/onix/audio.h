@@ -2,8 +2,8 @@
 #define ONIX_AUDIO_H
 
 #include <onix/type.h>
-static void play(u32 frequence);
-static void mute();
-static void beep();
+void play(u32 frequence);
+void mute();
+void beep();
 
 #endif
