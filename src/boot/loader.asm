@@ -102,8 +102,65 @@ _begin_protect_mode:
     mov ss, ax
     mov esp, STACK_TOP
 
-    jmp SelectorCode: KERNEL_ADDRESS
+    call init_kernel
+
+    jmp SelectorCode: KERNEL_ENTRY
     jmp $
+
+memcpy:
+    push ebp
+    mov ebp, esp
+
+    push esi
+    push edi
+    push ecx
+
+    mov edi, [ebp + 8] ; Destination
+    mov esi, [ebp + 12] ; Source
+    mov ecx, [ebp + 16] ; Counter
+.1:
+    cmp ecx, 0
+    jz .2
+
+    mov al, [ds:esi]
+    inc esi
+    mov byte [es:edi], al
+    inc edi
+
+    dec ecx
+    jmp .1
+.2:
+    mov eax, [ebp + 8]
+    pop ecx
+    pop edi
+    pop esi
+    mov esp, ebp
+    pop ebp
+    ret
+
+init_kernel:
+    xor esi, esi
+    mov cx, word [KERNEL_ADDRESS + 2Ch];
+    movzx ecx, cx
+    mov esi, [KERNEL_ADDRESS + 1Ch]
+    add esi, KERNEL_ADDRESS
+.begin:
+    mov eax, [esi + 0]
+    cmp eax, 0
+    jz .no_action
+    push dword [esi + 010h]
+    mov eax, [esi + 04h]
+    add eax, KERNEL_ADDRESS
+    push eax
+    push dword [esi + 08h]
+    call memcpy
+    add esp, 12
+.no_action:
+    add esi, 020h
+    dec ecx
+    jnz .begin
+    ret
+
 
 [SECTION .data1]
 

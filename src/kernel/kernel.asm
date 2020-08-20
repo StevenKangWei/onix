@@ -1,9 +1,10 @@
 [section .text]
 
-extern __kernel_entry
+extern __enter_kernel
+extern __init_kernel
 
 global _start
 
 _start:
-    call __kernel_entry
+    call __init_kernel
     jmp $
