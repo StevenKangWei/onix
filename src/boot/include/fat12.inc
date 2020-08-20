@@ -141,7 +141,7 @@ KERNEL_ADDRESS   equ 0x80400
     add bx, [BPB_BytsPerSec]
     jnc %%read_file
 
-%%next_segment
+%%next_segment:
     push ax
     mov ax, es
     add ax, 0x1000
