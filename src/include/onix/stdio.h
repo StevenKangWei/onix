@@ -4,7 +4,7 @@
 #include <onix/type.h>
 
 #define VGA_ADDRESS 0xB8000
-#define VGA_LENGTH 0x8000 // 32kB
+#define VGA_LENGTH 2000 //
 #define VGA_BLOCK_SIZE 2
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -41,6 +41,6 @@ void put(char character, uchar color);
 
 void putchar(char character);
 void print(const char *string);
-int printf(const char *format, ...);
+void printf(const char *format, ...);
 
 #endif

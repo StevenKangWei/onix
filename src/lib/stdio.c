@@ -68,8 +68,10 @@ void putchar(char character)
     case '\b':
         x = x >= 1 ? x - 1 : 0;
         set_cursor(x, y);
+        break;
     case '\r':
         set_cursor(0, y);
+        break;
     case '\n':
         set_cursor(0, y + 1);
         break;
@@ -94,7 +96,7 @@ void putchar(char character)
 void clear()
 {
     set_cursor(0, 0);
-    for (u32 i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+    for (u32 i = 0; i < VGA_LENGTH; i++)
     {
         putchar(' ');
     }
@@ -110,7 +112,7 @@ void print(const char *string)
     }
 }
 
-int printf(const char *format, ...)
+void printf(const char *format, ...)
 {
     char buffer[256];
     va_list args;
@@ -150,7 +152,7 @@ int printf(const char *format, ...)
             putchar(va_arg(next, char));
             break;
         case 's':
-            print(va_arg(next, uchar *));
+            print(va_arg(next, char *));
             break;
         case '%':
             putchar('%');

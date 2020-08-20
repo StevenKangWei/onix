@@ -2,6 +2,7 @@
 
 void sleep(float second)
 {
+    second++;
 }
 
 void delay(float second)
