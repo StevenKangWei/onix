@@ -37,19 +37,17 @@ read_success:
 
     lgdt [GDTPTR]; load gdt register
 
-    mov eax, cr0    ; switch to protected mode
-    or al, 1        ; set protect mode bit
-    mov cr0, eax
-
     in al, 92h
     or al, 2
     out 92h, al
 
-    ;in al,0xee
+    mov eax, cr0    ; switch to protected mode
+    or al, 1        ; set protect mode bit
+    mov cr0, eax
 
     ; jump to protect mode
     jmp dword SelectorCode:( LOADER_ADDRESS + _begin_protect_mode)
-    jmp $
+    jmp $ ; should never go here
 
 BIOS_PRINT_FUNCTION
 
@@ -109,6 +107,5 @@ _begin_protect_mode:
 
 [SECTION .data1]
 
-STACK_SPACE: times 1000h db 0
+STACK_SPACE: times 0x1000 db 0
 STACK_TOP equ LOADER_ADDRESS + $
-
