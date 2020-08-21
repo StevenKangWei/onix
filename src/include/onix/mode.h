@@ -4,7 +4,6 @@
 #include <onix/type.h>
 
 #define GDT_SIZE 128
-#define IDT_SIZE 256
 
 #define DA_DPL0 0x00
 #define DA_DPL1 0x20
