@@ -163,10 +163,21 @@ void hwint_finish()
 
 void hwint_master_handler(int irq)
 {
-    printf("Master interrupt request %d \n\0", irq);
+    // printf("Master interrupt request %d \n\0", irq);
 
     // // finish interrupt
-    // io_outb(0x20, 0x20);
+    int status;
+    int keycode;
+    io_outb(0x20, 0x20);
+    status = io_inb(KEYBOARD_STATUS_PORT);
+    /* Lowest bit of status will be set if buffer is not empty */
+    if (status & 0x01)
+    {
+        keycode = io_inb(KEYBOARD_DATA_PORT);
+        if (keycode < 0)
+            return;
+        printf("Key code %x\n\0", keycode);
+    }
 }
 
 void hwint_slave_handler(int irq)

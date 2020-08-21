@@ -10,9 +10,10 @@ char process_stack[PROCESS_STACK_SIZE_TOTAL];
 
 void test_process()
 {
+    int i = 0;
     while (true)
     {
-        printf("T\0");
+        printf("This is a process %d\n\0", i++);
         delay(5000000);
     }
 }

@@ -38,3 +38,24 @@ load_gdt:
     mov [gdt_ptr], ax
     lgdt [gdt_ptr]
     ret
+
+global io_outb
+io_outb:
+    mov edx, [esp + 4] ; port
+    mov al, [esp + 4 + 4] ; value
+    out dx, al
+    nop ; delay
+    nop
+    nop
+    ret
+
+global io_inb
+io_inb:
+    mov edx, [esp + 4] ; port
+    xor eax, eax
+    in al, dx
+    nop ; delay
+    nop
+    nop
+    ret
+

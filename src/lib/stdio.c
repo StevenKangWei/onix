@@ -4,6 +4,7 @@
 #include <onix/type.h>
 #include <onix/stdarg.h>
 #include <onix/stdlib.h>
+#include <onix/string.h>
 
 u16 get_cursor()
 {
@@ -40,6 +41,20 @@ u16 get_color(int back, int front)
     return back << 4 | front;
 }
 
+void scroll(int row)
+{
+    if (row > VGA_HEIGHT)
+        return;
+
+    int length = VGA_WIDTH * VGA_BLOCK_SIZE;
+    for (size_t i = 0; i < VGA_HEIGHT; i++)
+    {
+        volatile char *dest = (volatile char *)VGA_ADDRESS + (i * length);
+        volatile char *src = (volatile char *)VGA_ADDRESS + ((i + row) * length);
+        memcpy(dest, src, length);
+    }
+}
+
 void put(char character, uchar color)
 {
 #ifdef ONIX_DEBUG
@@ -54,6 +69,11 @@ void put(char character, uchar color)
     pos++;
     u16 x = pos % VGA_WIDTH;
     u16 y = pos / VGA_WIDTH;
+    if (y >= VGA_HEIGHT)
+    {
+        scroll(1);
+        y--;
+    }
     set_cursor(x, y);
 }
 

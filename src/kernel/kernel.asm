@@ -34,7 +34,7 @@ _entry:
     ltr ax
 
     ;cli;
-    ;sti; allow interrupts
+    sti; allow interrupts
 
     call enter_kernel
     jmp $
