@@ -38,11 +38,17 @@ $(BUILD)/kernel.o: $(KERNEL)/kernel.c
 $(BUILD)/mode.o: $(KERNEL)/mode.c
 	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD)/sys.o: $(LIB)/sys.asm
-	$(ASM) $(ASMFLAGS) $< -o $@
-
 $(BUILD)/io.o: $(KERNEL)/io.c
 	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/interrupt.a: $(KERNEL)/interrupt.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
+$(BUILD)/interrupt.o: $(KERNEL)/interrupt.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/sys.o: $(LIB)/sys.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
 
 $(BUILD)/time.o: $(LIB)/time.c
 	$(CC) $(CFLAGS) $< -o $@
@@ -62,7 +68,7 @@ $(BUILD)/stdlib.o: $(LIB)/stdlib.c
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
 	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o \
-	$(BUILD)/stdlib.o $(BUILD)/mode.o
+	$(BUILD)/stdlib.o $(BUILD)/mode.o $(BUILD)/interrupt.o $(BUILD)/interrupt.a 
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
