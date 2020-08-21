@@ -2,11 +2,19 @@
 #include <onix/string.h>
 #include <onix/stdio.h>
 #include <onix/interrupt.h>
+#include <onix/process.h>
+#include <onix/time.h>
 
 void enter_kernel()
 {
     const char string[] = "Hello, Onix!!!\n\0";
     printf(string);
+
+    init_processes();
+
+    while (true)
+    {
+    }
 }
 
 void init_kernel()
@@ -18,6 +26,8 @@ void init_kernel()
     printf(string);
     init_gdt();
     init_interrupts();
+    init_tss();
+    init_ldt();
 }
 
 #ifdef ONIX_DEBUG

@@ -84,6 +84,7 @@ exception:
 
 extern hwint_master_handler
 extern hwint_slave_handler
+extern hwint_test_handler
 
 global hwint00
 global hwint01
@@ -111,7 +112,7 @@ global hwint15
 
 ALIGN   16
 hwint00:    ; Interrupt routine for irq 0 (the clock).
-    hwint_master 0
+    iretd
 
 ALIGN   16
 hwint01:    ; Interrupt routine for irq 1 (keyboard)

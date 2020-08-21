@@ -54,6 +54,9 @@ $(BUILD)/process.a: $(KERNEL)/process.asm
 $(BUILD)/process.o: $(KERNEL)/process.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/memory.o: $(KERNEL)/memory.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/sys.o: $(LIB)/sys.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
@@ -76,7 +79,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
 	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o \
 	$(BUILD)/stdlib.o $(BUILD)/mode.o $(BUILD)/interrupt.o $(BUILD)/interrupt.a \
-	$(BUILD)/process.a $(BUILD)/process.o
+	$(BUILD)/process.a $(BUILD)/process.o $(BUILD)/memory.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin

@@ -32,7 +32,7 @@
 #define INT_S_CTLMASK 0xA1 /* setting bits in this port disables ints <Slave>  */
 
 extern Gate idt[IDT_SIZE];
-extern DESCPointer idt_ptr;
+extern DPointer idt_ptr;
 
 void init_interrupts();
 void init_idt();

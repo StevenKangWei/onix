@@ -1,5 +1,9 @@
-KERNEL_STACK_SIZE equ 4096
+%include "onix/const.inc"
+
+KERNEL_STACK_SIZE equ 2048
 KERNEL_CODE_SEGMENT equ 8
+bits 32
+
 [section .bss]
 align 4
 kernel_stack:
@@ -7,10 +11,12 @@ kernel_stack:
 
 [section .text]
 
-extern enter_kernel
-extern init_kernel
 extern gdt_ptr
 extern idt_ptr
+extern tss
+
+extern enter_kernel
+extern init_kernel
 
 global _start
 
@@ -20,10 +26,15 @@ _start:
     call init_kernel
     lgdt [gdt_ptr]
     lidt [idt_ptr]
+
     jmp KERNEL_CODE_SEGMENT:_entry
 _entry:
-    sti; allow interrupts
+    xor eax, eax
+    mov ax, SELECTOR_TSS
+    ltr ax
+
+    ;cli;
+    ;sti; allow interrupts
+
     call enter_kernel
     jmp $
-
-
