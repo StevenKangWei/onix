@@ -106,7 +106,7 @@ global hwint15
     push %1
     call hwint_master_handler
     add esp, 4
-    iret
+    iretd
 %endmacro
 
 ALIGN   16
@@ -145,7 +145,7 @@ hwint07:    ; Interrupt routine for irq 7 (printer)
     push %1
     call hwint_slave_handler
     add esp, 4
-    iret
+    iretd
 %endmacro
 
 ALIGN   16
