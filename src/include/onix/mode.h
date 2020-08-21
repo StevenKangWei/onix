@@ -39,6 +39,20 @@
 #define PG_USS 0
 #define PG_USU 4
 
+#define GDT_INDEX_DUMMY 0
+#define GDT_INDEX_CODE 1
+#define GDT_INDEX_DATA 2
+#define GDT_INDEX_VIDEO 3
+
+#define SELECTOR_DUMMY 0
+#define SELECTOR_CODE 0x08
+#define SELECTOR_DATA 0x10
+#define SELECTOR_VIDEO (0x18 + 3)
+
+#define PRIVILEGE_KERNEL 0
+#define PRIVILEGE_TASK 1
+#define PRIVILEGE_USER 3
+
 typedef struct GDTDescriptor
 {
     u16 limit_low;       /* Limit */
@@ -49,13 +63,22 @@ typedef struct GDTDescriptor
     u8 base_high;        /* Base */
 } _packed GDTDescriptor;
 
-typedef struct GDTPointer
+typedef struct DESCPointer
 {
     u16 limite;
     u32 base;
-} _packed GDTPointer;
+} _packed DESCPointer;
 
-extern GDTPointer gdt_ptr;
+typedef struct Gate
+{
+    u16 offset_low; /* Offset Low */
+    u16 selector;   /* Selector */
+    u8 dcount;
+    u8 attr;         /* P(1) DPL(2) DT(1) TYPE(4) */
+    u16 offset_high; /* Offset High */
+} _packed Gate;
+
+extern DESCPointer gdt_ptr;
 extern GDTDescriptor gdt[GDT_SIZE];
 
 void init_gdt();

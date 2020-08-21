@@ -16,7 +16,8 @@ ASM_KERNEL_FLAGS= -I include/ -f elf
 ASMFLAGS= -I $(INCLUDE) -f elf -g 
 BOOTFLAGS= -I $(BOOT_INC) -f bin
 CFLAGS = -I $(INCLUDE) -c -fno-builtin -m32 -fno-stack-protector \
-		-nostdlib -nostdinc -nostartfiles -nodefaultlibs -Wall -Wextra -Werror 
+		-nostdlib -nostdinc -nostartfiles -nodefaultlibs -Wall -Wextra 
+		# -Werror 
 ENTRYPOINT = 0x30400
 
 LDFLAGS = -m elf_i386 -s -Ttext $(ENTRYPOINT)

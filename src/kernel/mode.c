@@ -1,7 +1,7 @@
 #include <onix/mode.h>
 #include <onix/string.h>
 
-GDTPointer gdt_ptr;
+DESCPointer gdt_ptr;
 GDTDescriptor gdt[GDT_SIZE];
 
 void init_gdt()
