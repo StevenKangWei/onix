@@ -41,6 +41,8 @@ void init_pic()
 
 void init_interrupts()
 {
+    printf("Initializing Interrupts");
+
     init_pic();
 
     init_idt_desc(INT_VECTOR_DIVIDE, DA_386IGate, divide_error, PRIVILEGE_KERNEL);
