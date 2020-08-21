@@ -41,7 +41,7 @@ void init_pic()
 
 void init_interrupts()
 {
-    printf("Initializing Interrupts");
+    printf("Initializing Interrupts...\n\0");
 
     init_pic();
 
