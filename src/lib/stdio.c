@@ -8,10 +8,10 @@
 u16 get_cursor()
 {
     u16 pos = 0;
-    outb(0x3D4, 0x0F);
-    pos |= inb(0x3D5);
-    outb(0x3D4, 0x0E);
-    pos |= ((u16)inb(0x3D5)) << 8;
+    io_outb(0x3D4, 0x0F);
+    pos |= io_inb(0x3D5);
+    io_outb(0x3D4, 0x0E);
+    pos |= ((u16)io_inb(0x3D5)) << 8;
     return pos;
 }
 
@@ -29,10 +29,10 @@ u16 get_cursor_y()
 void set_cursor(int x, int y)
 {
     u16 pos = y * VGA_WIDTH + x;
-    outb(0x3D4, 0x0F);
-    outb(0x3D5, (u8)(pos & 0xFF));
-    outb(0x3D4, 0x0E);
-    outb(0x3D5, (u8)((pos >> 8) & 0xFF));
+    io_outb(0x3D4, 0x0F);
+    io_outb(0x3D5, (u8)(pos & 0xFF));
+    io_outb(0x3D4, 0x0E);
+    io_outb(0x3D5, (u8)((pos >> 8) & 0xFF));
 }
 
 u16 get_color(int back, int front)

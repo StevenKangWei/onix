@@ -1,6 +1,6 @@
 #include <onix/io.h>
 
-void outb(u16 port, u8 val)
+void io_outb(u16 port, u8 val)
 {
 #ifdef ONIX_DEBUG
     return;
@@ -10,7 +10,7 @@ void outb(u16 port, u8 val)
                  : "a"(val), "Nd"(port));
 }
 
-u8 inb(u16 port)
+u8 io_inb(u16 port)
 {
 #ifdef ONIX_DEBUG
     return 0;

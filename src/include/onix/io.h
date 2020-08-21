@@ -3,8 +3,8 @@
 
 #include <onix/type.h>
 
-void outb(u16 port, u8 value);
-u8 inb(u16 port);
+void io_outb(u16 port, u8 value);
+u8 io_inb(u16 port);
 int write(char *buf, unsigned int len);
 
 #endif
