@@ -42,6 +42,9 @@ $(BUILD)/mode.o: $(KERNEL)/mode.c
 $(BUILD)/io.o: $(KERNEL)/io.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/io.a: $(KERNEL)/io.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
 $(BUILD)/interrupt.a: $(KERNEL)/interrupt.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
@@ -54,11 +57,14 @@ $(BUILD)/process.a: $(KERNEL)/process.asm
 $(BUILD)/process.o: $(KERNEL)/process.c
 	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD)/memory.o: $(KERNEL)/memory.c
+$(BUILD)/syscall.a: $(KERNEL)/syscall.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
+$(BUILD)/syscall.o: $(KERNEL)/syscall.c
 	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD)/sys.o: $(LIB)/sys.asm
-	$(ASM) $(ASMFLAGS) $< -o $@
+$(BUILD)/memory.o: $(KERNEL)/memory.c
+	$(CC) $(CFLAGS) $< -o $@
 
 $(BUILD)/time.o: $(LIB)/time.c
 	$(CC) $(CFLAGS) $< -o $@
@@ -76,10 +82,10 @@ $(BUILD)/stdlib.o: $(LIB)/stdlib.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(BUILD)/kernel.bin: \
-	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
+	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/io.a $(BUILD)/memory.o \
 	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o \
 	$(BUILD)/stdlib.o $(BUILD)/mode.o $(BUILD)/interrupt.o $(BUILD)/interrupt.a \
-	$(BUILD)/process.a $(BUILD)/process.o $(BUILD)/memory.o
+	$(BUILD)/process.a $(BUILD)/process.o $(BUILD)/syscall.o $(BUILD)/syscall.a 
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
@@ -94,7 +100,7 @@ debug:CFLAGS = -I $(INCLUDE) -c -m32 -g -fno-stack-protector -DONIX_DEBUG
 debug:ASMFLAGS = -I $(INCLUDE) -f elf -F dwarf -g 
 debug:LDFLAGS = -m elf_i386 -s 
 debug: \
-	$(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/sys.o \
+	$(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/syscall.o $(BUILD)/syscall.a \
 	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o \
 	$(BUILD)/stdlib.o 
 	$(CC) -DONIX_DEBUG -m32 $^ -o $(BUILD)/$@ 
