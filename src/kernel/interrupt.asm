@@ -117,9 +117,22 @@ extern process_ready
 
 ALIGN   16
 hwint00:
+    pushad
+    push ds
+    push es
+    push fs
+    push gs
+
     inc byte[gs:0]
     mov al, EOI
     out INT_M_CTL, al
+
+    pop gs
+    pop fs
+    pop es
+    pop ds
+    popad
+
     iretd
 
 ALIGN   16
