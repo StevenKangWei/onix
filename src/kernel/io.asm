@@ -35,3 +35,12 @@ io_inb:
     nop
     ret
 
+global io_sti
+io_sti:
+    sti
+    ret
+
+global io_cli
+io_cli:
+    cli
+    ret

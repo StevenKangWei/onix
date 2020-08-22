@@ -126,10 +126,14 @@ extern Descriptor gdt[GDT_SIZE];
 extern TSS tss;
 
 void init_gdt();
-extern void load_gdt();
 void init_descriptor(Descriptor *desc, u32 base, u32 limit, u16 attribute);
 
 void init_tss();
 void init_ldt();
+
+extern void load_gdt(DPointer *gdt_ptr);
+extern void load_idt(DPointer *idt_ptr);
+extern void save_gdt(DPointer *gdt_ptr);
+extern void load_tss(uint selector);
 
 #endif

@@ -5,6 +5,10 @@
 
 void io_outb(u16 port, u8 value);
 u8 io_inb(u16 port);
+
+extern void io_sti();
+extern void io_cli();
+
 int write(char *buf, unsigned int len);
 
 #endif

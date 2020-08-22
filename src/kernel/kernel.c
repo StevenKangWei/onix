@@ -4,30 +4,41 @@
 #include <onix/interrupt.h>
 #include <onix/process.h>
 #include <onix/time.h>
+#include <onix/io.h>
+#include <onix/kernel.h>
 
-void enter_kernel()
-{
-    const char string[] = "Hello, Onix!!!\n\0";
-    printf(string);
-
-    init_processes();
-
-    while (true)
-    {
-    }
-}
+uint KERNEL_STACK[KERNEL_STACK_SIZE];
+u32 KERNEL_STACK_TOP = (u32)(KERNEL_STACK) + KERNEL_STACK_SIZE - 1;
 
 void init_kernel()
 {
 #ifndef ONIX_DEBUG
     clear();
 #endif
-    const char string[] = "Initializing...\n\0";
-    printf(string);
+    printf("Initializing...\n\0");
+    printf("KERNEL STACK %x : %x \n\0", KERNEL_STACK, KERNEL_STACK_TOP);
+
+    save_gdt(&gdt_ptr);
     init_gdt();
     init_interrupts();
     init_tss();
     init_ldt();
+
+    load_gdt(&gdt_ptr);
+    load_idt(&idt_ptr);
+    load_tss(SELECTOR_TSS);
+    io_sti(); // open interrupts
+}
+
+void enter_kernel()
+{
+    printf("Hello, Onix!!!\n\0");
+
+    init_processes();
+
+    while (true)
+    {
+    }
 }
 
 #ifdef ONIX_DEBUG
@@ -37,3 +48,8 @@ int main(int argc, char const *argv[])
     return 0;
 }
 #endif
+
+void prit(int a)
+{
+    printf("%d\n\0", a);
+}
