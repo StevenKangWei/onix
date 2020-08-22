@@ -28,7 +28,7 @@ void init_kernel()
     load_gdt(&gdt_ptr);
     load_idt(&idt_ptr);
     load_tss(SELECTOR_TSS);
-    io_sti(); // open interrupts
+    // io_sti(); // open interrupts
 }
 
 void enter_kernel()

@@ -118,30 +118,36 @@ extern process_ready
 ALIGN   16
 hwint00:
     sub esp, 4
+
     pushad
+
     push ds
     push es
     push fs
     push gs
 
-    mov	dx, ss
-    mov	ds, dx
-    mov	es, dx
+    mov dx, ss
+    mov ds, dx
+    mov es, dx
+
+    mov esp, [KERNEL_STACK_TOP]
 
     inc byte[gs:0]
     mov al, EOI
     out INT_M_CTL, al
 
-    lea	eax, [esp + PROCESS_STACK_TOP]
-    mov	dword [tss + TSS3_S_SP0], eax
+    mov esp, [process_ready]
+    lea eax, [esp + PROCESS_STACK_TOP]
+    mov dword [tss + TSS3_S_SP0], eax
 
     pop gs
     pop fs
     pop es
     pop ds
-    popad
-    add esp, 4
 
+    popad
+
+    add esp, 4
     iretd
 
 ALIGN   16
