@@ -10,7 +10,7 @@ schedule:
 
     mov esp, [process_ready]
     lldt [esp + LDT_SEL]
-    lea eax, [esp + STACKTOP]
+    lea eax, [esp + PROCESS_STACK_TOP]
     mov dword [tss + TSS3_S_SP0], eax
 
     pop gs
