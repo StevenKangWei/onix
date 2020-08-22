@@ -1,4 +1,5 @@
 [section .text]
+%include "onix/const.inc"
 
 extern exception_handler
 
@@ -110,8 +111,15 @@ global hwint15
     iretd
 %endmacro
 
+extern tss
+extern KERNEL_STACK_TOP
+extern process_ready
+
 ALIGN   16
-hwint00:    ; Interrupt routine for irq 0 (the clock).
+hwint00:
+    inc byte[gs:0]
+    mov al, EOI
+    out INT_M_CTL, al
     iretd
 
 ALIGN   16

@@ -33,7 +33,8 @@ void init_pic()
     io_outb(INT_S_CTLMASK, 0x1);
 
     /* Master 8259, OCW1.  */
-    io_outb(INT_M_CTLMASK, 0xFD);
+    // io_outb(INT_M_CTLMASK, 0xFD);
+    io_outb(INT_M_CTLMASK, 0xFE);
 
     /* Slave  8259, OCW1.  */
     io_outb(INT_S_CTLMASK, 0xFF);
@@ -168,7 +169,7 @@ void hwint_master_handler(int irq)
     // // finish interrupt
     int status;
     int keycode;
-    io_outb(0x20, 0x20);
+    io_outb(INT_M_CTL, EOI);
     status = io_inb(KEYBOARD_STATUS_PORT);
     /* Lowest bit of status will be set if buffer is not empty */
     if (status & 0x01)

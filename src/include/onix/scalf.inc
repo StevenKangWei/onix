@@ -56,7 +56,7 @@ hexloop:
     call sprint
     ret
 
-[section .data] 
+[section .data]
 xpos db 0
 ypos db 15
 hexstr db '0123456789ABCDEF'

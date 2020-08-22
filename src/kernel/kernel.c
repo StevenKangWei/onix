@@ -6,9 +6,10 @@
 #include <onix/time.h>
 #include <onix/io.h>
 #include <onix/kernel.h>
+#include <onix/memory.h>
 
 uint KERNEL_STACK[KERNEL_STACK_SIZE];
-u32 KERNEL_STACK_TOP = (u32)(KERNEL_STACK) + KERNEL_STACK_SIZE - 1;
+u32 KERNEL_STACK_TOP = (u32)KERNEL_STACK + KERNEL_STACK_SIZE - 1;
 
 void init_kernel()
 {
@@ -36,8 +37,10 @@ void enter_kernel()
 
     init_processes();
 
+    int i = 1;
     while (true)
     {
+        printf("This is kernel process %d!!! \n\0", i++);
     }
 }
 
