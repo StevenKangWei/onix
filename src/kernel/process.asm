@@ -19,4 +19,4 @@ schedule:
     popad
     add esp, 4
 
-    retd
+    iretd
