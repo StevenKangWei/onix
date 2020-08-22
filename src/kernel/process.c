@@ -13,7 +13,7 @@ void test_process()
     int i = 0;
     while (true)
     {
-        printf("This is a process %d\n\0", i++);
+        printf("This is a process %d\r\0", i++);
         delay(5000000);
     }
 }

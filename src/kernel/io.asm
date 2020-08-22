@@ -18,7 +18,7 @@ read_byte:
 global io_outb
 io_outb:
     mov edx, [esp + 4] ; port
-    mov al, [esp + 4 + 4] ; value
+    mov al, [esp + 8] ; value
     out dx, al
     nop ; delay
     nop
