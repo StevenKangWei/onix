@@ -11,8 +11,8 @@ TSS tss;
 void init_gdt()
 {
     printf("Initializing GDT...\n\0");
-    memcpy(&gdt, (void *)gdt_ptr.base, gdt_ptr.limite + 1);
-    gdt_ptr.limite = GDT_SIZE * sizeof(Descriptor) - 1;
+    memcpy(&gdt, (void *)gdt_ptr.base, gdt_ptr.limit + 1);
+    gdt_ptr.limit = GDT_SIZE * sizeof(Descriptor) - 1;
     gdt_ptr.base = (u32)&gdt;
 }
 

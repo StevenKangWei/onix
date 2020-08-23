@@ -111,7 +111,7 @@ void init_interrupts()
 
     init_idt_desc(INT_VECTOR_IRQ8 + 7, DA_386IGate, hwint15, PRIVILEGE_KERNEL);
 
-    idt_ptr.limite = GDT_SIZE * sizeof(Gate) - 1;
+    idt_ptr.limit = IDT_SIZE * sizeof(Gate) - 1;
     idt_ptr.base = (u32)&idt;
 
     for (size_t i = 0; i < NR_IRQ; i++)

@@ -76,7 +76,7 @@ typedef struct Descriptor
 
 typedef struct DPointer
 {
-    u16 limite;
+    u16 limit;
     u32 base;
 } _packed DPointer;
 
