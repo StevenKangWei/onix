@@ -28,6 +28,10 @@ void init_processes()
     {
         strcpy(process->name, task->name);
         process->pid = i;
+        process->ticks = process->priority = (PROCESS_SIZE - i + 1) * 500;
+
+        printf("ticks %d priority %d \n\0", process->ticks, process->priority);
+
         process->selector = selector;
         memcpy(&process->ldt[0], &gdt[SELECTOR_CODE >> 3], sizeof(Descriptor));
         process->ldt[0].attr1 = DA_C | PRIVILEGE_TASK << 5;
@@ -67,4 +71,32 @@ void running()
 {
     kernel_reenter++;
     _running();
+}
+
+void schedule()
+{
+    Process *process;
+    int max_ticks = 0;
+
+    while (!max_ticks)
+    {
+        for (size_t i = 0; i < PROCESS_SIZE; i++)
+        {
+            process = process_table + i;
+            if (process->ticks > max_ticks)
+            {
+                max_ticks = process->ticks;
+                process_ready = process;
+            }
+        }
+        if (max_ticks)
+        {
+            return;
+        }
+        for (size_t i = 0; i < PROCESS_SIZE; i++)
+        {
+            process = process_table + i;
+            process->ticks = process->priority;
+        }
+    }
 }

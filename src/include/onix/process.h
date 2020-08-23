@@ -38,6 +38,8 @@ typedef struct Process
     Descriptor ldt[LDT_SIZE]; /* local descriptors for code and data */
     u32 pid;                  /* process id passed in from MM */
     char name[16];            /* name of the process */
+    int ticks;
+    int priority;
 } _packed Process;
 
 typedef void (*Target)();
@@ -57,6 +59,7 @@ extern u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 
 extern void _running();
 void running();
+void schedule();
 
 void init_processes();
 #endif

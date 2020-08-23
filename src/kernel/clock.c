@@ -19,13 +19,10 @@ void init_clock()
 void clock_handler(int irq)
 {
     kernel_ticks++;
+    process_ready->ticks--;
     if (kernel_reenter > 1)
     {
         return;
     }
-    process_ready++;
-    if (process_ready >= process_table + PROCESS_SIZE)
-    {
-        process_ready = process_table;
-    }
+    schedule();
 }
