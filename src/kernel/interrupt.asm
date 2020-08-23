@@ -120,57 +120,27 @@ global schedule
 
 ALIGN   16
 hwint00:
-    sub esp, 4
-
-    pushad
-
-    push ds
-    push es
-    push fs
-    push gs
-
-    mov dx, ss
-    mov ds, dx
-    mov es, dx
+    call save
+    
+    in al, INT_M_CTLMASK
+    or al, 1
+    out INT_M_CTLMASK, al
 
     inc byte[gs:0]
     mov al, EOI
     out INT_M_CTL, al
 
-    inc dword [kernel_reenter]
-    cmp dword [kernel_reenter], 1
-    jne .1
-
-    mov esp, [KERNEL_STACK_TOP]
-
-    push schedule
-    jmp .2
-.1:
-    push reenter
-.2:
     sti
     push 0
     call clock_handler
     add esp, 4
     cli
+
+    in al, INT_M_CTLMASK
+    and al, 0xFE
+    out INT_M_CTLMASK, al
+
     ret
-
-schedule:
-    mov esp, [process_ready]
-    lldt [esp + LDT_SELECTOR]
-    lea eax, [esp + PROCESS_STACK_TOP]
-    mov dword [tss + TSS3_S_SP0], eax
-
-reenter:
-    dec dword [kernel_reenter]
-    pop gs
-    pop fs
-    pop es
-    pop ds
-
-    popad
-    add esp, 4
-    iretd
 
 ALIGN   16
 hwint01:    ; Interrupt routine for irq 1 (keyboard)
@@ -238,3 +208,48 @@ hwint14:    ; Interrupt routine for irq 14 (AT winchester)
 ALIGN   16
 hwint15:    ; Interrupt routine for irq 15
     hwint_slave 15
+
+
+save:
+    ;sub esp, 4
+    pushad
+
+    push ds
+    push es
+    push fs
+    push gs
+
+    mov dx, ss
+    mov ds, dx
+    mov es, dx
+
+    mov eax, esp
+
+    inc dword [kernel_reenter]
+    cmp dword [kernel_reenter], 1
+    jne .1
+
+    mov esp, [KERNEL_STACK_TOP]
+
+    push schedule
+    jmp [eax + RETADR - PROCESS_STACKBASE]
+.1:
+    push reenter
+    jmp [eax + RETADR - PROCESS_STACKBASE]
+
+schedule:
+    mov esp, [process_ready]
+    lldt [esp + LDT_SELECTOR]
+    lea eax, [esp + PROCESS_STACK_TOP]
+    mov dword [tss + TSS3_S_SP0], eax
+
+reenter:
+    dec dword [kernel_reenter]
+    pop gs
+    pop fs
+    pop es
+    pop ds
+
+    popad
+    add esp, 4
+    iretd
