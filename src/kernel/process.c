@@ -5,26 +5,15 @@
 #include <onix/mode.h>
 #include <onix/kernel.h>
 #include <onix/interrupt.h>
+#include <onix/test.h>
 
 Process process_table[PROCESS_SIZE];
 Process *process_ready;
 u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 Task task_table[PROCESS_SIZE] = {
-    {test_process, PROCESS_STACK_SIZE, "Process A\0"},
-    {test_process, PROCESS_STACK_SIZE, "Process B\0"},
-    {test_process, PROCESS_STACK_SIZE, "Process C\0"}};
-
-void test_process()
-{
-    int i = 0;
-    while (true)
-    {
-        printf("This is %s - %d : %d\n\0",
-               process_ready->name,
-               process_ready->pid, i++);
-        delay(5000000);
-    }
-}
+    {test_process_a, PROCESS_STACK_SIZE, "Process A\0"},
+    {test_process_b, PROCESS_STACK_SIZE, "Process B\0"},
+    {test_process_c, PROCESS_STACK_SIZE, "Process C\0"}};
 
 void init_processes()
 {

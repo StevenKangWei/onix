@@ -58,6 +58,4 @@ extern u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 extern void schedule();
 
 void init_processes();
-
-void test_process();
 #endif
