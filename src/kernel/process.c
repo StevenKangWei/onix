@@ -28,7 +28,7 @@ void init_processes()
     {
         strcpy(process->name, task->name);
         process->pid = i;
-        process->ticks = process->priority = (PROCESS_SIZE - i + 1) * 500;
+        process->ticks = process->priority = (PROCESS_SIZE - i + 1) * 100;
 
         printf("ticks %d priority %d \n\0", process->ticks, process->priority);
 

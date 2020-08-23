@@ -24,5 +24,10 @@ void clock_handler(int irq)
     {
         return;
     }
+    if (process_ready->ticks > 0)
+    {
+        return;
+    }
+
     schedule();
 }

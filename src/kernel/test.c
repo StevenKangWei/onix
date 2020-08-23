@@ -11,7 +11,7 @@ void test_process_a()
     {
         tick = get_ticks();
         printf("This is process A %d: %d %d\n\0", process_ready->pid, i++, tick);
-        delay(2000);
+        delay(1000);
     }
 }
 
@@ -21,7 +21,7 @@ void test_process_b()
     while (true)
     {
         printf("This is process B %d: %d\n\0", process_ready->pid, i++);
-        delay(3500);
+        delay(1000);
     }
 }
 
@@ -31,6 +31,6 @@ void test_process_c()
     while (true)
     {
         printf("This is process C %d: %d\n\0", process_ready->pid, i++);
-        delay(5000);
+        delay(1000);
     }
 }
