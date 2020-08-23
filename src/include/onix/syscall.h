@@ -14,7 +14,7 @@ extern void write_byte(int addr, char data);
 
 int sys_get_ticks();
 
-void sys_call();
+void system_call();
 int get_ticks();
 
 #endif

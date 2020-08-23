@@ -40,11 +40,11 @@ typedef struct Process
     char name[16];            /* name of the process */
 } _packed Process;
 
-typedef void (*taskf)();
+typedef void (*Target)();
 
 typedef struct Task
 {
-    taskf init_eip;
+    Target init_eip;
     int stack_size;
     char name[32];
 } _packed Task;

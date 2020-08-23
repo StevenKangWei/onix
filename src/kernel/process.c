@@ -42,6 +42,8 @@ void init_processes()
         process->frame.ss = (8 & SA_RPL_MASK & SA_TI_MASK) | SA_TIL | RPL_TASK;
         process->frame.gs = (SELECTOR_VIDEO & SA_RPL_MASK) | RPL_TASK;
 
+        printf("init process %x task %x %x\n\0", process, task->init_eip, stack);
+
         process->frame.eip = (u32)task->init_eip;
         process->frame.esp = (u32)stack;
         process->frame.eflags = 0x1202;
@@ -51,11 +53,15 @@ void init_processes()
         task++;
         selector += 1 << 3;
     }
+
     process_ready = process_table;
-    kernel_reenter = 0;
+    kernel_reenter = 1;
 
     put_irq_handler(CLOCK_IRQ, clock_handler);
     enable_irq(CLOCK_IRQ);
 
     schedule();
+    while (true)
+    {
+    }
 }

@@ -250,13 +250,13 @@ reenter:
     iretd
 
 extern syscall_table
-global sys_call
-sys_call:
+global system_call
+system_call:
     call save
 
     sti
     call [syscall_table + eax * 4]
-    mov  [esi + EAXREG - PROCESS_STACK_TOP], eax
+    mov dword [esi + EAXREG - PROCESS_STACKBASE], eax
     cli
 
     ret
