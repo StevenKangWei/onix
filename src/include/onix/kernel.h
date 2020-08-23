@@ -6,5 +6,6 @@
 
 extern uint KERNEL_STACK[KERNEL_STACK_SIZE];
 extern u32 KERNEL_STACK_TOP;
+extern u32 kernel_reenter;
 
 #endif

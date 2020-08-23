@@ -54,6 +54,9 @@ $(BUILD)/interrupt.a: $(KERNEL)/interrupt.asm
 $(BUILD)/interrupt.o: $(KERNEL)/interrupt.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/clock.o: $(KERNEL)/clock.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/process.a: $(KERNEL)/process.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
@@ -86,7 +89,7 @@ $(BUILD)/stdlib.o: $(LIB)/stdlib.c
 
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.o $(BUILD)/io.a $(BUILD)/memory.o \
-	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o \
+	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o $(BUILD)/clock.o\
 	$(BUILD)/stdlib.o $(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/interrupt.o $(BUILD)/interrupt.a \
 	$(BUILD)/process.a $(BUILD)/process.o $(BUILD)/syscall.o $(BUILD)/syscall.a 
 	$(LD) $(LDFLAGS) $^ -o $@

@@ -114,6 +114,9 @@ global hwint15
 extern tss
 extern KERNEL_STACK_TOP
 extern process_ready
+extern kernel_reenter
+extern clock_handler
+global schedule
 
 ALIGN   16
 hwint00:
@@ -130,23 +133,42 @@ hwint00:
     mov ds, dx
     mov es, dx
 
-    mov esp, [KERNEL_STACK_TOP]
-
     inc byte[gs:0]
     mov al, EOI
     out INT_M_CTL, al
 
+    inc dword [kernel_reenter]
+    cmp dword [kernel_reenter], 1
+    jne .1
+
+    mov esp, [KERNEL_STACK_TOP]
+
+    push schedule
+    jmp .2
+.1:
+    push reenter
+.2:
+    sti
+    push 0
+    call clock_handler
+    add esp, 4
+    cli
+    ret
+
+schedule:
     mov esp, [process_ready]
+    lldt [esp + LDT_SELECTOR]
     lea eax, [esp + PROCESS_STACK_TOP]
     mov dword [tss + TSS3_S_SP0], eax
 
+reenter:
+    dec dword [kernel_reenter]
     pop gs
     pop fs
     pop es
     pop ds
 
     popad
-
     add esp, 4
     iretd
 

@@ -5,7 +5,7 @@
 #include <onix/mode.h>
 
 #define LDT_SIZE 2
-#define PROCESS_SIZE 1
+#define PROCESS_SIZE 3
 #define PROCESS_STACK_SIZE 0x8000
 #define PROCESS_STACK_SIZE_TOTAL (PROCESS_SIZE * PROCESS_STACK_SIZE)
 
@@ -38,12 +38,22 @@ typedef struct Process
     Descriptor ldt[LDT_SIZE]; /* local descriptors for code and data */
     u32 pid;                  /* process id passed in from MM */
     char name[16];            /* name of the process */
-} Process;
+} _packed Process;
 
-extern Process processes[PROCESS_SIZE];
+typedef void (*taskf)();
+
+typedef struct Task
+{
+    taskf init_eip;
+    int stack_size;
+    char name[32];
+} _packed Task;
+
+extern Process process_table[PROCESS_SIZE];
 extern Process *process_ready;
+extern Task task_table[];
 
-extern char process_stack[PROCESS_STACK_SIZE_TOTAL];
+extern u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 
 extern void schedule();
 

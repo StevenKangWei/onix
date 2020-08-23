@@ -8,8 +8,9 @@
 #include <onix/kernel.h>
 #include <onix/memory.h>
 
-uint KERNEL_STACK[KERNEL_STACK_SIZE];
-u32 KERNEL_STACK_TOP = (u32)KERNEL_STACK + KERNEL_STACK_SIZE - 1;
+u32 KERNEL_STACK[KERNEL_STACK_SIZE];
+u32 KERNEL_STACK_TOP = (u32)KERNEL_STACK + KERNEL_STACK_SIZE;
+u32 kernel_reenter;
 
 void init_kernel()
 {
@@ -28,7 +29,6 @@ void init_kernel()
     load_gdt(&gdt_ptr);
     load_idt(&idt_ptr);
     load_tss(SELECTOR_TSS);
-    // io_sti(); // open interrupts
 }
 
 void enter_kernel()

@@ -25,3 +25,14 @@ void memset(void *dest, char ch, size_t size)
         *((char *)(dest + i)) = ch;
     }
 }
+
+void strcpy(char *dest, char *src)
+{
+    int i = 0;
+    while (src[i])
+    {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = 0;
+}

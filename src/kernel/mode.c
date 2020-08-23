@@ -27,7 +27,7 @@ void init_descriptor(Descriptor *desc, u32 base, u32 limit, u16 attribute)
 }
 
 void init_tss()
-{   
+{
 
     printf("Initilaizing TSS...\n\0");
     memset(&tss, 0, sizeof(tss));
@@ -46,9 +46,18 @@ void init_tss()
 void init_ldt()
 {
     printf("Initilaizing LDT...\n\0");
-    init_descriptor(
-        &gdt[GDT_INDEX_LDT],
-        vir2phys(seg2phys(SELECTOR_DATA), processes[0].ldt),
-        LDT_SIZE * sizeof(Descriptor) - 1,
-        DA_LDT);
+
+    Process *process = process_table;
+    u16 selector = GDT_INDEX_LDT << 3;
+
+    for (size_t i = 0; i < PROCESS_SIZE; i++)
+    {
+        init_descriptor(
+            &gdt[selector >> 3],
+            vir2phys(seg2phys(SELECTOR_DATA), process_table[i].ldt),
+            LDT_SIZE * sizeof(Descriptor) - 1,
+            DA_LDT);
+        process++;
+        selector += 1 << 3;
+    }
 }
