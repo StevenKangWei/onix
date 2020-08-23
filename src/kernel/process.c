@@ -4,6 +4,7 @@
 #include <onix/string.h>
 #include <onix/mode.h>
 #include <onix/kernel.h>
+#include <onix/interrupt.h>
 
 Process process_table[PROCESS_SIZE];
 Process *process_ready;
@@ -63,6 +64,9 @@ void init_processes()
     }
     process_ready = process_table;
     kernel_reenter = 0;
-    printf("initialized processes!!! %x\n\0", process_ready);
+
+    put_irq_handler(CLOCK_IRQ, clock_handler);
+    enable_irq(CLOCK_IRQ);
+
     schedule();
 }

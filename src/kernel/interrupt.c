@@ -5,6 +5,7 @@
 
 Gate idt[IDT_SIZE];
 DPointer idt_ptr;
+irq_handler irq_table[NR_IRQ];
 
 void init_pic()
 {
@@ -34,7 +35,7 @@ void init_pic()
 
     /* Master 8259, OCW1.  */
     // io_outb(INT_M_CTLMASK, 0xFD);
-    io_outb(INT_M_CTLMASK, 0xFE);
+    io_outb(INT_M_CTLMASK, 0xFF);
 
     /* Slave  8259, OCW1.  */
     io_outb(INT_S_CTLMASK, 0xFF);
@@ -112,6 +113,11 @@ void init_interrupts()
 
     idt_ptr.limite = GDT_SIZE * sizeof(Gate) - 1;
     idt_ptr.base = (u32)&idt;
+
+    for (size_t i = 0; i < NR_IRQ; i++)
+    {
+        irq_table[i] = hwint_test_handler;
+    }
 }
 
 void init_idt_desc(uchar vector, u8 desc_type, void *handler, uchar privilege)
@@ -193,4 +199,10 @@ void hwint_slave_handler(int irq)
 void hwint_test_handler()
 {
     putchar('t');
+}
+
+void put_irq_handler(int irq, irq_handler handler)
+{
+    disable_irq(irq);
+    irq_table[irq] = handler;
 }
