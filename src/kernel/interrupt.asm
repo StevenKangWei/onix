@@ -204,7 +204,7 @@ extern KERNEL_STACK_TOP
 extern process_ready
 extern kernel_reenter
 
-global schedule
+global _running
 
 save:
     pushad
@@ -226,19 +226,19 @@ save:
 
     mov esp, [KERNEL_STACK_TOP]
 
-    push schedule
+    push _running
     jmp [esi + RETADR - PROCESS_STACKBASE]
 .1:
-    push reenter
+    push _reenter
     jmp [esi + RETADR - PROCESS_STACKBASE]
 
-schedule:
+_running:
     mov esp, [process_ready]
     lldt [esp + LDT_SELECTOR]
     lea eax, [esp + PROCESS_STACK_TOP]
     mov dword [tss + TSS3_S_SP0], eax
 
-reenter:
+_reenter:
     dec dword [kernel_reenter]
     pop gs
     pop fs

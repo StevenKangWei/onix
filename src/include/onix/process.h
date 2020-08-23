@@ -55,7 +55,8 @@ extern Task task_table[];
 
 extern u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 
-extern void schedule();
+extern void _running();
+void running();
 
 void init_processes();
 #endif
