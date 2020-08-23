@@ -206,3 +206,19 @@ void put_irq_handler(int irq, irq_handler handler)
     disable_irq(irq);
     irq_table[irq] = handler;
 }
+
+void enable_irq(int irq)
+{
+    if (irq < 8)
+        io_outb(INT_M_CTLMASK, io_inb(INT_M_CTLMASK) & ~(1 << irq));
+    else
+        io_outb(INT_S_CTLMASK, io_inb(INT_S_CTLMASK) & ~(1 << irq));
+}
+
+void disable_irq(int irq)
+{
+    if (irq < 8)
+        io_outb(INT_M_CTLMASK, io_inb(INT_M_CTLMASK) | (1 << irq));
+    else
+        io_outb(INT_S_CTLMASK, io_inb(INT_S_CTLMASK) | (1 << irq));
+}

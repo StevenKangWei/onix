@@ -9,7 +9,7 @@
 #include <onix/memory.h>
 
 u32 KERNEL_STACK[KERNEL_STACK_SIZE];
-u32 KERNEL_STACK_TOP = (u32)KERNEL_STACK + KERNEL_STACK_SIZE;
+void *KERNEL_STACK_TOP = KERNEL_STACK + KERNEL_STACK_SIZE;
 u32 kernel_reenter;
 
 void init_kernel()

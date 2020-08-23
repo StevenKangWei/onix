@@ -17,10 +17,8 @@ void print_singal(int i)
 
 void clock_handler(int irq)
 {
-    print_singal(1);
     if (kernel_reenter > 1)
     {
-        print_singal(2);
         return;
     }
 

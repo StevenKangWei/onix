@@ -104,43 +104,33 @@ global hwint13
 global hwint14
 global hwint15
 
-%macro hwint_master    1
-    push %1
-    call hwint_master_handler
-    add esp, 4
-    iretd
-%endmacro
+extern irq_table
 
-extern tss
-extern KERNEL_STACK_TOP
-extern process_ready
-extern kernel_reenter
-extern clock_handler
-global schedule
-
-ALIGN   16
-hwint00:
+%macro hwint_master 1
     call save
-    
+
     in al, INT_M_CTLMASK
-    or al, 1
+    or al, (1 << %1)
     out INT_M_CTLMASK, al
 
-    inc byte[gs:0]
     mov al, EOI
     out INT_M_CTL, al
 
     sti
-    push 0
-    call clock_handler
-    add esp, 4
+    push %1
+    call [irq_table + 4 * %1]
+    pop ecx
     cli
 
     in al, INT_M_CTLMASK
-    and al, 0xFE
+    and al, ~(1 << %1)
     out INT_M_CTLMASK, al
-
     ret
+%endmacro
+
+ALIGN   16
+hwint00:
+    hwint_master 0
 
 ALIGN   16
 hwint01:    ; Interrupt routine for irq 1 (keyboard)
@@ -209,9 +199,14 @@ ALIGN   16
 hwint15:    ; Interrupt routine for irq 15
     hwint_slave 15
 
+extern tss
+extern KERNEL_STACK_TOP
+extern process_ready
+extern kernel_reenter
+
+global schedule
 
 save:
-    ;sub esp, 4
     pushad
 
     push ds
@@ -253,57 +248,3 @@ reenter:
     popad
     add esp, 4
     iretd
-
-global enable_irq
-enable_irq:
-    mov     ecx, [esp + 4]          ; irq
-    pushf
-    cli
-    mov     ah, ~1
-    rol     ah, cl                  ; ah = ~(1 << (irq % 8))
-    cmp     cl, 8
-    jae     enable_8                ; enable irq >= 8 at the slave 8259
-enable_0:
-    in      al, INT_M_CTLMASK
-    and     al, ah
-    out     INT_M_CTLMASK, al       ; clear bit at master 8259
-    popf
-    ret
-enable_8:
-    in      al, INT_S_CTLMASK
-    and     al, ah
-    out     INT_S_CTLMASK, al       ; clear bit at slave 8259
-    popf
-    ret
-
-global disable_irq
-disable_irq:
-    mov     ecx, [esp + 4]          ; irq
-    pushf
-    cli
-    mov     ah, 1
-    rol     ah, cl                  ; ah = (1 << (irq % 8))
-    cmp     cl, 8
-    jae     disable_8               ; disable irq >= 8 at the slave 8259
-disable_0:
-    in      al, INT_M_CTLMASK
-    test    al, ah
-    jnz     dis_already             ; already disabled?
-    or      al, ah
-    out     INT_M_CTLMASK, al       ; set bit at master 8259
-    popf
-    mov     eax, 1                  ; disabled by this function
-    ret
-disable_8:
-    in      al, INT_S_CTLMASK
-    test    al, ah
-    jnz     dis_already             ; already disabled?
-    or      al, ah
-    out     INT_S_CTLMASK, al       ; set bit at slave 8259
-    popf
-    mov     eax, 1                  ; disabled by this function
-    ret
-dis_already:
-    popf
-    xor     eax, eax                ; already disabled
-    ret

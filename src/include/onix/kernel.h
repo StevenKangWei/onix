@@ -5,7 +5,7 @@
 #define KERNEL_STACK_SIZE 4096
 
 extern uint KERNEL_STACK[KERNEL_STACK_SIZE];
-extern u32 KERNEL_STACK_TOP;
+extern void *KERNEL_STACK_TOP;
 extern u32 kernel_reenter;
 
 #endif
