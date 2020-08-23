@@ -30,6 +30,6 @@ void mute()
 void beep()
 {
     play(1000);
-    delay(100);
+    delay(1500);
     mute();
 }

@@ -3,7 +3,7 @@
 
 #include <onix/type.h>
 
-void sleep(float second);
-void delay(float second);
+void sleep(int milliseconds);
+void delay(int milliseconds);
 
 #endif

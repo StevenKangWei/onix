@@ -1,14 +1,21 @@
 #include <onix/time.h>
+#include <onix/clock.h>
+#include <onix/syscall.h>
+#include <onix/stdio.h>
 
-void sleep(float second)
+void sleep(int milliseconds)
 {
-    second++;
+    milliseconds++;
 }
 
-void delay(float second)
+void delay(int milliseconds)
 {
-    u32 count = (u32)second;
-    while (count-- > 0)
+    int start = get_ticks();
+    while (true)
     {
+        int current = get_ticks();
+        int interval = current - start;
+        if (interval * 1000 / HZ > milliseconds)
+            break;
     }
 }
