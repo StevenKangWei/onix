@@ -25,6 +25,8 @@
 #define INT_VECTOR_PAGE_FAULT 0xE
 #define INT_VECTOR_COPROC_ERR 0x10
 
+#define INT_VECTOR_SYS_CALL 0x90
+
 #define INT_VECTOR_IRQ0 0x20
 #define INT_VECTOR_IRQ8 0x28
 
@@ -100,4 +102,5 @@ extern void enable_irq(int irq);
 extern void disable_irq(int irq);
 
 void hwint_test_handler();
+
 #endif

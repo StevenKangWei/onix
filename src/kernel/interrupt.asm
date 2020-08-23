@@ -218,7 +218,7 @@ save:
     mov ds, dx
     mov es, dx
 
-    mov eax, esp
+    mov esi, esp
 
     inc dword [kernel_reenter]
     cmp dword [kernel_reenter], 1
@@ -227,10 +227,10 @@ save:
     mov esp, [KERNEL_STACK_TOP]
 
     push schedule
-    jmp [eax + RETADR - PROCESS_STACKBASE]
+    jmp [esi + RETADR - PROCESS_STACKBASE]
 .1:
     push reenter
-    jmp [eax + RETADR - PROCESS_STACKBASE]
+    jmp [esi + RETADR - PROCESS_STACKBASE]
 
 schedule:
     mov esp, [process_ready]
@@ -248,3 +248,15 @@ reenter:
     popad
     add esp, 4
     iretd
+
+extern syscall_table
+global sys_call
+sys_call:
+    call save
+
+    sti
+    call [syscall_table + eax * 4]
+    mov  [esi + EAXREG - PROCESS_STACK_TOP], eax
+    cli
+
+    ret
