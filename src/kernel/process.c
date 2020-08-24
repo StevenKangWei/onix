@@ -5,12 +5,14 @@
 #include <onix/mode.h>
 #include <onix/kernel.h>
 #include <onix/interrupt.h>
+#include <onix/tty.h>
 #include <onix/test.h>
 
 Process process_table[PROCESS_SIZE];
 Process *process_ready;
 u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 Task task_table[PROCESS_SIZE] = {
+    {task_tty, PROCESS_STACK_SIZE, "Process tty\0"},
     {test_process_a, PROCESS_STACK_SIZE, "Process A\0"},
     {test_process_b, PROCESS_STACK_SIZE, "Process B\0"},
     {test_process_c, PROCESS_STACK_SIZE, "Process C\0"}};

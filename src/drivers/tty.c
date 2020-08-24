@@ -1,10 +1,11 @@
 #include <onix/tty.h>
+#include <onix/keyboard.h>
 
 void task_tty()
 {
     while (true)
     {
-        /* code */
+        read_keyboard();
     }
     
 }

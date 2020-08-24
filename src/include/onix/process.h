@@ -5,7 +5,7 @@
 #include <onix/mode.h>
 
 #define LDT_SIZE 2
-#define PROCESS_SIZE 3
+#define PROCESS_SIZE 4
 #define PROCESS_STACK_SIZE 0x8000
 #define PROCESS_STACK_SIZE_TOTAL (PROCESS_SIZE * PROCESS_STACK_SIZE)
 
@@ -37,7 +37,7 @@ typedef struct Process
     u16 selector;             /* gdt selector giving ldt base and limit */
     Descriptor ldt[LDT_SIZE]; /* local descriptors for code and data */
     u32 pid;                  /* process id passed in from MM */
-    char name[16];            /* name of the process */
+    char name[32];            /* name of the process */
     int ticks;
     int priority;
 } _packed Process;
