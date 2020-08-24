@@ -8,6 +8,7 @@
 #include <onix/kernel.h>
 #include <onix/memory.h>
 #include <onix/clock.h>
+#include <onix/keyboard.h>
 
 u32 KERNEL_STACK[KERNEL_STACK_SIZE];
 void *KERNEL_STACK_TOP = KERNEL_STACK + KERNEL_STACK_SIZE;
@@ -37,6 +38,8 @@ void enter_kernel()
     printf("Hello, Onix!!!\n\0");
 
     init_clock();
+    init_keyboard();
+
     init_processes();
 
     int i = 1;

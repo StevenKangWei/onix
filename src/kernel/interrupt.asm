@@ -204,7 +204,7 @@ extern KERNEL_STACK_TOP
 extern process_ready
 extern kernel_reenter
 
-global _running
+global _restart
 
 save:
     pushad
@@ -226,13 +226,13 @@ save:
 
     mov esp, [KERNEL_STACK_TOP]
 
-    push _running
+    push _restart
     jmp [esi + RETADR - PROCESS_STACKBASE]
 .1:
     push _reenter
     jmp [esi + RETADR - PROCESS_STACKBASE]
 
-_running:
+_restart:
     mov esp, [process_ready]
     lldt [esp + LDT_SELECTOR]
     lea eax, [esp + PROCESS_STACK_TOP]

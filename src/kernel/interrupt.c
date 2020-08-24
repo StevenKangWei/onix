@@ -166,10 +166,6 @@ void exception_handler(int vec_no, int err_code, int eip, int cs, int eflags)
            err_code);
 }
 
-void hwint_finish()
-{
-    //EOI
-}
 
 void hwint_master_handler(int irq)
 {

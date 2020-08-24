@@ -61,16 +61,13 @@ void init_processes()
     process_ready = process_table;
     kernel_reenter = 0;
 
-    put_irq_handler(CLOCK_IRQ, clock_handler);
-    enable_irq(CLOCK_IRQ);
-
-    running();
+    restart();
 }
 
-void running()
+void restart()
 {
     kernel_reenter++;
-    _running();
+    _restart();
 }
 
 void schedule()
