@@ -7,5 +7,12 @@ void task_tty()
     {
         read_keyboard();
     }
-    
+}
+
+void in_process(u32 key)
+{
+    if (!(key & FLAG_EXT))
+    {
+        putchar(key & 0xFF);
+    }
 }

@@ -150,12 +150,13 @@ static int num_lock;    /* Num Lock	 */
 static int scroll_lock; /* Scroll Lock	 */
 static int column;
 
-void read_keyboard()
+u8 get_input_code()
 {
-    if (kinput.count <= 0)
-        return;
+    while (kinput.count <= 0)
+    {
+    }
     io_cli();
-    int keycode = *(kinput.tail);
+    u8 keycode = *(kinput.tail);
     kinput.tail++;
     if (kinput.tail == kinput.buf + KB_IN_BYTES)
     {
@@ -163,67 +164,128 @@ void read_keyboard()
     }
     kinput.count--;
     io_sti();
+    return keycode;
+}
+
+void read_keyboard()
+{
+    int key = 0;
+    bool make;
+    if (kinput.count <= 0)
+        return;
+
+    code_with_E0 = 0;
+    u8 keycode = get_input_code();
 
     if (keycode == 0xE1)
     {
-        return;
+        int i;
+        u8 pausebrk_scode[] = {0xE1, 0x1D, 0x45,
+                               0xE1, 0x9D, 0xC5};
+        int is_pausebreak = 1;
+        for (i = 1; i < 6; i++)
+        {
+            if (get_input_code() != pausebrk_scode[i])
+            {
+                is_pausebreak = 0;
+                break;
+            }
+        }
+        if (is_pausebreak)
+        {
+            key = PAUSEBREAK;
+        }
     }
     if (keycode == 0xE0)
     {
-        code_with_E0 = 1;
-    }
-    bool make = keycode & FLAG_BREAK ? false : true;
-    int index = (keycode & 0x7F) * MAP_COLS;
-    u32 *keyrow = &keymap[index];
+        keycode = get_input_code();
 
-    column = 0;
-    if (shift_l || shift_r)
-    {
-        column = 1;
-    }
-    if (code_with_E0)
-    {
-        column = 2;
-        code_with_E0 = 0;
-    }
-
-    u32 key = keyrow[column];
-    switch (key)
-    {
-    case SHIFT_L:
-        shift_l = make;
-        key = 0;
-        break;
-    case SHIFT_R:
-        shift_r = make;
-        key = 0;
-        break;
-    case CTRL_L:
-        ctrl_l = make;
-        key = 0;
-        break;
-    case CTRL_R:
-        ctrl_r = make;
-        key = 0;
-        break;
-    case ALT_L:
-        alt_l = make;
-        key = 0;
-        break;
-    case ALT_R:
-        alt_r = make;
-        key = 0;
-        break;
-    default:
-        if (!make)
+        /* PrintScreen down */
+        if (keycode == 0x2A)
         {
-            key = 0;
+            if (get_input_code() == 0xE0)
+            {
+                if (get_input_code() == 0x37)
+                {
+                    key = PRINTSCREEN;
+                    make = 1;
+                }
+            }
         }
-        break;
+        /* PrintScreen up */
+        if (keycode == 0xB7)
+        {
+            if (get_input_code() == 0xE0)
+            {
+                if (get_input_code() == 0xAA)
+                {
+                    key = PRINTSCREEN;
+                    make = 0;
+                }
+            }
+        }
+        if (key == 0)
+        {
+            code_with_E0 = 1;
+        }
     }
-    if (key)
+    if ((key != PAUSEBREAK) && (key != PRINTSCREEN))
     {
-        putchar(key);
+        make = keycode & FLAG_BREAK ? false : true;
+        int index = (keycode & 0x7F) * MAP_COLS;
+        u32 *keyrow = &keymap[index];
+
+        column = 0;
+        if (shift_l || shift_r)
+        {
+            column = 1;
+        }
+        if (code_with_E0)
+        {
+            column = 2;
+            code_with_E0 = 0;
+        }
+
+        u32 key = keyrow[column];
+        switch (key)
+        {
+        case SHIFT_L:
+            shift_l = make;
+            key = 0;
+            break;
+        case SHIFT_R:
+            shift_r = make;
+            key = 0;
+            break;
+        case CTRL_L:
+            ctrl_l = make;
+            key = 0;
+            break;
+        case CTRL_R:
+            ctrl_r = make;
+            key = 0;
+            break;
+        case ALT_L:
+            alt_l = make;
+            key = 0;
+            break;
+        case ALT_R:
+            alt_r = make;
+            key = 0;
+            break;
+        default:
+            break;
+        }
+        if (make)
+        {
+            key |= shift_l ? FLAG_SHIFT_L : 0;
+            key |= shift_r ? FLAG_SHIFT_R : 0;
+            key |= ctrl_l ? FLAG_CTRL_L : 0;
+            key |= ctrl_r ? FLAG_CTRL_R : 0;
+            key |= alt_l ? FLAG_ALT_L : 0;
+            key |= alt_r ? FLAG_ALT_R : 0;
+            in_process(key);
+        }
     }
 }
 
