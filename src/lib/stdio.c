@@ -77,6 +77,18 @@ void put(char character, uchar color)
     set_cursor(x, y);
 }
 
+void setchar(char character, uchar color, int x, int y)
+{
+    if (x < 0 || x >= VGA_WIDTH)
+        return;
+    if (y < 0 || y >= VGA_HEIGHT)
+        return;
+    u16 pos = y * VGA_WIDTH + x;
+    volatile char *video = (volatile char *)VGA_ADDRESS + (pos * VGA_BLOCK_SIZE);
+    *video++ = character;
+    *video++ = color;
+}
+
 void putchar(char character)
 {
     u16 pos = get_cursor();

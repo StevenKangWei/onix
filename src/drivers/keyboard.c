@@ -151,7 +151,22 @@ void read_keyboard()
     }
     kinput.count--;
     io_sti();
-    putchar(keycode);
+
+    if (keycode == 0xE1)
+    {
+        return;
+    }
+    if (keycode == 0xE0)
+    {
+        return;
+    }
+    bool make = keycode & FLAG_BREAK ? false : true;
+    if (make)
+    {
+        int index = (keycode & 0x7F) * MAP_COLS;
+        char key = keymap[index];
+        putchar(key);
+    }
 }
 
 void keyboard_handler(int irq)
