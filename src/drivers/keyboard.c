@@ -138,6 +138,18 @@ u32 keymap[NR_SCAN_CODES * MAP_COLS] = {
     /* 0x7E - ???       */ 0, 0, 0,
     /* 0x7F - ???       */ 0, 0, 0};
 
+static int code_with_E0 = 0;
+static int shift_l;     /* l shift state */
+static int shift_r;     /* r shift state */
+static int alt_l;       /* l alt state	 */
+static int alt_r;       /* r left state	 */
+static int ctrl_l;      /* l ctrl state	 */
+static int ctrl_r;      /* l ctrl state	 */
+static int caps_lock;   /* Caps Lock	 */
+static int num_lock;    /* Num Lock	 */
+static int scroll_lock; /* Scroll Lock	 */
+static int column;
+
 void read_keyboard()
 {
     if (kinput.count <= 0)
@@ -158,13 +170,59 @@ void read_keyboard()
     }
     if (keycode == 0xE0)
     {
-        return;
+        code_with_E0 = 1;
     }
     bool make = keycode & FLAG_BREAK ? false : true;
-    if (make)
+    int index = (keycode & 0x7F) * MAP_COLS;
+    u32 *keyrow = &keymap[index];
+
+    column = 0;
+    if (shift_l || shift_r)
     {
-        int index = (keycode & 0x7F) * MAP_COLS;
-        char key = keymap[index];
+        column = 1;
+    }
+    if (code_with_E0)
+    {
+        column = 2;
+        code_with_E0 = 0;
+    }
+
+    u32 key = keyrow[column];
+    switch (key)
+    {
+    case SHIFT_L:
+        shift_l = make;
+        key = 0;
+        break;
+    case SHIFT_R:
+        shift_r = make;
+        key = 0;
+        break;
+    case CTRL_L:
+        ctrl_l = make;
+        key = 0;
+        break;
+    case CTRL_R:
+        ctrl_r = make;
+        key = 0;
+        break;
+    case ALT_L:
+        alt_l = make;
+        key = 0;
+        break;
+    case ALT_R:
+        alt_r = make;
+        key = 0;
+        break;
+    default:
+        if (!make)
+        {
+            key = 0;
+        }
+        break;
+    }
+    if (key)
+    {
         putchar(key);
     }
 }
@@ -199,6 +257,11 @@ void init_keyboard()
 {
     kinput.count = 0;
     kinput.head = kinput.tail = kinput.buf;
+
+    shift_l = shift_r = 0;
+    alt_l = alt_r = 0;
+    ctrl_l = ctrl_r = 0;
+
     put_irq_handler(KEYBOARD_IRQ, keyboard_handler);
     enable_irq(KEYBOARD_IRQ);
 }
