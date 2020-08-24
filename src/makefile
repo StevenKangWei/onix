@@ -58,6 +58,9 @@ $(BUILD)/interrupt.o: $(KERNEL)/interrupt.c
 $(BUILD)/keyboard.o: $(DRIVERS)/keyboard.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/tty.o: $(DRIVERS)/tty.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/clock.o: $(KERNEL)/clock.c
 	$(CC) $(CFLAGS) $< -o $@
 
@@ -99,7 +102,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/audio.o $(BUILD)/string.o $(BUILD)/clock.o\
 	$(BUILD)/stdlib.o $(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/interrupt.o $(BUILD)/interrupt.a \
 	$(BUILD)/process.a $(BUILD)/process.o $(BUILD)/syscall.o $(BUILD)/syscall.a $(BUILD)/test.o \
-	$(BUILD)/keyboard.o 
+	$(BUILD)/keyboard.o $(BUILD)/tty.o 
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
