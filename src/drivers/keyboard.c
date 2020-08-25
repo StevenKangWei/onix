@@ -2,6 +2,7 @@
 #include <onix/interrupt.h>
 #include <onix/stdio.h>
 #include <onix/io.h>
+#include <onix/tty.h>
 
 KeyboardInput kinput;
 
@@ -167,7 +168,7 @@ u8 get_input_code()
     return keycode;
 }
 
-void read_keyboard()
+void read_keyboard(TTY *tty)
 {
     int key = 0;
     bool make;
@@ -284,7 +285,7 @@ void read_keyboard()
             key |= ctrl_r ? FLAG_CTRL_R : 0;
             key |= alt_l ? FLAG_ALT_L : 0;
             key |= alt_r ? FLAG_ALT_R : 0;
-            in_process(key);
+            in_process(tty, key);
         }
     }
 }

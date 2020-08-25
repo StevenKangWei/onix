@@ -11,7 +11,39 @@
 #define V_MEM_BASE 0xB8000  /* base of color video memory */
 #define V_MEM_SIZE 0x8000   /* 32K: B8000H -> BFFFFH */
 
-void task_tty();
-void in_process(u32 key);
+#define NR_CONSOLES 3 /* consoles */
 
+#define TTY_IN_BYTES 256 /* tty input queue size */
+
+typedef struct Console
+{
+    unsigned int current;
+    unsigned int addr;
+    unsigned int limit;
+    unsigned int cursor;
+} _packed Console;
+
+/* TTY */
+typedef struct TTY
+{
+    u32 buffer[TTY_IN_BYTES];
+    u32 *head;
+    u32 *tail;
+    int count;
+
+    Console *console;
+} _packed TTY;
+
+extern TTY tty_table[];
+extern Console console_table[];
+
+void out_char(Console *console, char ch);
+
+void task_tty();
+bool is_current_console(Console *console);
+
+void init_tty(TTY *tty);
+void read_tty(TTY *tty);
+void write_tty(TTY *tty);
+void in_process(TTY *tty, u32 key);
 #endif

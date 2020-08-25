@@ -2,6 +2,7 @@
 #define ONIX_KEYBOARD_H
 
 #include <onix/type.h>
+#include <onix/tty.h>
 
 /************************************************************************/
 /*                          Macros Declaration                          */
@@ -119,7 +120,7 @@ typedef struct KeyboardInput
     char buf[KB_IN_BYTES];
 } _packed KeyboardInput;
 
-void read_keyboard();
+void read_keyboard(TTY * tty);
 void init_keyboard();
 
 #endif

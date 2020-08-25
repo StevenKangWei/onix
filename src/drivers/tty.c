@@ -1,25 +1,53 @@
 #include <onix/tty.h>
 #include <onix/keyboard.h>
 #include <onix/io.h>
+#include <onix/stdio.h>
+
+TTY tty_table[NR_CONSOLES];
+Console console_table[NR_CONSOLES];
+Console *current_console;
 
 void task_tty()
 {
+    TTY *tty;
+    for (tty = tty_table; tty < tty_table + NR_CONSOLES; tty++)
+    {
+        init_tty(tty);
+    }
+    current_console = console_table;
     while (true)
     {
-        read_keyboard();
+        for (tty = tty_table; tty < tty_table + NR_CONSOLES; tty++)
+        {
+            read_tty(tty);
+            write_tty(tty);
+        }
     }
 }
 
-void in_process(u32 key)
+void init_tty(TTY *tty)
+{
+    tty->count = 0;
+    tty->head = tty->tail = tty->buffer;
+
+    int index = tty - tty_table;
+    tty->console = console_table + index;
+}
+
+void in_process(TTY *tty, u32 key)
 {
     if (!(key & FLAG_EXT))
     {
-       
-    }
-
-    if (!(key & FLAG_EXT))
-    {
-        putchar(key & 0xFF);
+        if (tty->count < TTY_IN_BYTES)
+        {
+            *(tty->head) = key;
+            tty->head++;
+            if (tty->head == tty->buffer + TTY_IN_BYTES)
+            {
+                tty->head = tty->buffer;
+            }
+            tty->count++;
+        }
     }
     else
     {
@@ -47,4 +75,28 @@ void in_process(u32 key)
             break;
         }
     }
+}
+
+void out_char(Console *console, char ch)
+{
+    putchar(ch);
+}
+
+void read_tty(TTY *tty)
+{
+    if (tty->console == current_console)
+    {
+        read_keyboard(tty);
+    }
+}
+void write_tty(TTY *tty)
+{
+    if (tty->count <= 0)
+        return;
+    char ch = *(tty->tail);
+    tty->tail++;
+    if (tty->tail == tty->buffer + TTY_IN_BYTES)
+        tty->tail = tty->buffer;
+    tty->count--;
+    out_char(tty->console, ch);
 }
