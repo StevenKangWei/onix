@@ -100,3 +100,17 @@ void write_tty(TTY *tty)
     tty->count--;
     out_char(tty->console, ch);
 }
+
+void set_cursor(int pos)
+{
+    io_outb(CRTC_ADDR_REG, CURSOR_L);
+    io_outb(CRTC_DATA_REG, (u8)(pos & 0xFF));
+    io_outb(CRTC_ADDR_REG, CURSOR_H);
+    io_outb(CRTC_DATA_REG, (u8)((pos >> 8) & 0xFF));
+}
+
+void set_cursor_coordinate(int x, int y)
+{
+    int pos = y * VGA_WIDTH + x;
+    set_cursor(pos);
+}

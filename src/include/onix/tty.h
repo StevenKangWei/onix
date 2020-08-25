@@ -46,4 +46,8 @@ void init_tty(TTY *tty);
 void read_tty(TTY *tty);
 void write_tty(TTY *tty);
 void in_process(TTY *tty, u32 key);
+
+void set_cursor(int pos);
+void set_cursor_coordinate(int x, int y);
+
 #endif

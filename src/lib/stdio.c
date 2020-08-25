@@ -5,6 +5,7 @@
 #include <onix/stdarg.h>
 #include <onix/stdlib.h>
 #include <onix/string.h>
+#include <onix/tty.h>
 
 u16 get_cursor()
 {
@@ -25,15 +26,6 @@ u16 get_cursor_y()
 {
     u16 pos = get_cursor();
     return pos / VGA_WIDTH;
-}
-
-void set_cursor(int x, int y)
-{
-    u16 pos = y * VGA_WIDTH + x;
-    io_outb(0x3D4, 0x0F);
-    io_outb(0x3D5, (u8)(pos & 0xFF));
-    io_outb(0x3D4, 0x0E);
-    io_outb(0x3D5, (u8)((pos >> 8) & 0xFF));
 }
 
 u16 get_color(int back, int front)
@@ -74,7 +66,7 @@ void put(char character, uchar color)
         scroll(1);
         y--;
     }
-    set_cursor(x, y);
+    set_cursor(pos);
 }
 
 void setchar(char character, uchar color, int x, int y)
@@ -99,13 +91,13 @@ void putchar(char character)
     {
     case '\b':
         x = x >= 1 ? x - 1 : 0;
-        set_cursor(x, y);
+        set_cursor_coordinate(x, y);
         break;
     case '\r':
-        set_cursor(0, y);
+        set_cursor_coordinate(0, y);
         break;
     case '\n':
-        set_cursor(0, y + 1);
+        set_cursor_coordinate(0, y + 1);
         break;
     case '\t':
         //table
@@ -127,12 +119,12 @@ void putchar(char character)
 
 void clear()
 {
-    set_cursor(0, 0);
+    set_cursor(0);
     for (u32 i = 0; i < VGA_LENGTH; i++)
     {
         putchar(' ');
     }
-    set_cursor(0, 0);
+    set_cursor(0);
 }
 
 void print(const char *string)

@@ -31,7 +31,6 @@
 u16 get_cursor();
 u16 get_cursor_x();
 u16 get_cursor_y();
-void set_cursor(int x, int y);
 
 void clear();
 
