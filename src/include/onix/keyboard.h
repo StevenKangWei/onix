@@ -11,6 +11,15 @@
 #define MAP_COLS 3         /* Number of columns in keymap */
 #define NR_SCAN_CODES 0x80 /* Number of scan codes (rows in keymap) */
 
+#define KB_DATA 0x60 /* I/O port for keyboard data \
+             Read : Read Output Buffer             \
+             Write: Write Input Buffer(8042 Data&8048 Command) */
+#define KB_CMD 0x64  /* I/O port for keyboard command \
+             Read : Read Status Register              \
+             Write: Write Input Buffer(8042 Command) */
+#define LED_CODE 0xED
+#define KB_ACK 0xFA
+
 #define FLAG_BREAK 0x0080   /* Break Code   */
 #define FLAG_EXT 0x0100     /* Normal function keys  */
 #define FLAG_SHIFT_L 0x0200 /* Shift key   */
@@ -120,7 +129,7 @@ typedef struct KeyboardInput
     char buf[KB_IN_BYTES];
 } _packed KeyboardInput;
 
-void read_keyboard(TTY * tty);
+void read_keyboard(TTY *tty);
 void init_keyboard();
 
 #endif
