@@ -5,7 +5,9 @@
 #include <onix/mode.h>
 
 #define LDT_SIZE 2
-#define PROCESS_SIZE 4
+#define KERNEL_TASK_SIZE 1
+#define USER_TASK_SIZE 3
+#define PROCESS_SIZE (KERNEL_TASK_SIZE + USER_TASK_SIZE)
 #define PROCESS_STACK_SIZE 0x8000
 #define PROCESS_STACK_SIZE_TOTAL (PROCESS_SIZE * PROCESS_STACK_SIZE)
 
@@ -53,7 +55,8 @@ typedef struct Task
 
 extern Process process_table[PROCESS_SIZE];
 extern Process *process_ready;
-extern Task task_table[];
+extern Task kernel_task_table[];
+extern Task user_task_table[];
 
 extern u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 
@@ -62,4 +65,6 @@ void restart();
 void schedule();
 
 void init_processes();
+
+void task_idle();
 #endif
