@@ -254,8 +254,13 @@ global system_call
 system_call:
     call save
 
+    push dword [process_ready]
+    push ecx
+    push ebx
+
     sti
     call [syscall_table + eax * 4]
+    add esp, 4 * 3
     mov dword [esi + EAXREG - PROCESS_STACKBASE], eax
     cli
 

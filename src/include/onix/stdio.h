@@ -16,6 +16,6 @@ void put(char character, uchar color);
 void putchar(char character);
 void setchar(char character, uchar color, int x, int y);
 void print(const char *string);
-void printf(const char *format, ...);
-
+int printf(const char *format, ...);
+int vsprintf(char *buffer, const char *fmt, va_list args);
 #endif

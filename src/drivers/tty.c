@@ -54,8 +54,7 @@ void select_console(int index)
     if (index < 0 || index >= NR_CONSOLES)
         return;
     current_console = console_table + index;
-    set_cursor(current_console->cursor);
-    set_start(current_console->current);
+    flush(current_console);
 }
 
 void init_tty(TTY *tty)
@@ -218,8 +217,11 @@ void out_char(Console *console, char ch)
 
 void flush(Console *console)
 {
-    set_cursor(console->cursor);
-    // set_start(console->start);
+    if (console == current_console)
+    {
+        set_cursor(console->cursor);
+        set_start(console->start);
+    }
 }
 
 void scroll(Console *console, int row)
@@ -314,6 +316,17 @@ void scroll_screen(Console *console, int direction)
             console->current += VGA_WIDTH;
         }
     }
-    set_start(console->current);
-    set_cursor(console->cursor);
+    flush(console);
+}
+
+void tty_write(TTY *tty, char *buffer, int length)
+{
+    char *p = buffer;
+    int i = length;
+
+    while (i)
+    {
+        out_char(tty->console, *p++);
+        i--;
+    }
 }

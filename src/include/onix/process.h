@@ -42,6 +42,7 @@ typedef struct Process
     char name[32];            /* name of the process */
     int ticks;
     int priority;
+    int tty_index;
 } _packed Process;
 
 typedef void (*Target)();

@@ -76,11 +76,16 @@ void init_processes()
         process->frame.eip = (u32)task->init_eip;
         process->frame.esp = (u32)stack;
         process->frame.eflags = eflags;
+        process->tty_index = 0;
 
         stack -= task->stack_size;
         process++;
         selector += 1 << 3;
     }
+
+    process_table[1].tty_index = 0;
+    process_table[2].tty_index = 1;
+    process_table[3].tty_index = 2;
 
     process_ready = process_table;
     kernel_reenter = 0;

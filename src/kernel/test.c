@@ -42,6 +42,7 @@ void test_process_b()
         setchar(ch, COLOR_DEFAULT, 77, 0);
 
         // printf("This is process B %d: %d\n\0", process_ready->pid, i++);
+        // printf("This\n\0");
         sleep(1000);
     }
 }

@@ -5,6 +5,7 @@
 #include <onix/stdarg.h>
 #include <onix/stdlib.h>
 #include <onix/string.h>
+#include <onix/syscall.h>
 #include <onix/tty.h>
 
 u16 get_cursor_x()
@@ -116,12 +117,81 @@ void print(const char *string)
     }
 }
 
-void printf(const char *format, ...)
+int vsprintf(char *buffer, const char *fmt, va_list args)
 {
-    char buffer[256];
+    char *p;
+    char tmp[256];
+    char *str;
+    va_list next = args;
+
+    for (p = buffer; *fmt; fmt++)
+    {
+        if (*fmt != '%')
+        {
+            *p++ = *fmt;
+            continue;
+        }
+
+        fmt++;
+
+        switch (*fmt)
+        {
+        case 'd':
+        case 'i':
+            itoa(va_arg(next, int), buffer, 10);
+            strcpy(p, tmp);
+            p += strlen(tmp);
+            break;
+        case 'u':
+            itoa(va_arg(next, uint), buffer, 10);
+            strcpy(p, tmp);
+            p += strlen(tmp);
+            break;
+        case 'o':
+            itoa(va_arg(next, uint), buffer, 8);
+            strcpy(p, tmp);
+            p += strlen(tmp);
+            break;
+        case 'x':
+        case 'X':
+            itoa(va_arg(next, int), buffer, 16);
+            strcpy(p, tmp);
+            p += strlen(tmp);
+            break;
+        case 'c':
+            *(p++) = va_arg(next, char);
+            break;
+        case 's':
+            str = va_arg(next, char *);
+            strcpy(p, str);
+            p += strlen(str);
+            break;
+        case '%':
+            *(p++) = '%';
+            break;
+        default:
+            break;
+        }
+    }
+    *(p++) = '\0';
+    return (p - buffer);
+}
+
+int printf(const char *format, ...)
+{
+    int i;
+    char buffer[1024];
+
     va_list args;
     va_start(args, format);
     va_list next = args;
+
+    if (current_console != NULL)
+    {
+        i = vsprintf(buffer, format, args);
+        write(buffer, i);
+        return i;
+    }
 
     for (; *format != '\0'; format++)
     {
