@@ -4,6 +4,7 @@
 
 global pause
 pause:
+    sti
     hlt
     ret
 
