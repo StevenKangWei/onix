@@ -7,16 +7,6 @@
 #include <onix/string.h>
 #include <onix/tty.h>
 
-u16 get_cursor()
-{
-    u16 pos = 0;
-    io_outb(0x3D4, 0x0F);
-    pos |= io_inb(0x3D5);
-    io_outb(0x3D4, 0x0E);
-    pos |= ((u16)io_inb(0x3D5)) << 8;
-    return pos;
-}
-
 u16 get_cursor_x()
 {
     u16 pos = get_cursor();
@@ -52,6 +42,7 @@ void put(char character, uchar color)
 #ifdef ONIX_DEBUG
     return;
 #endif
+
     u16 pos = get_cursor();
     volatile char *video = (volatile char *)VGA_ADDRESS + (pos * VGA_BLOCK_SIZE);
     *video++ = character;
@@ -112,7 +103,7 @@ void putchar(char character)
         beep();
         break;
     default:
-        put(character, COLOR_DEFAULT);
+        out_char(current_console, character);
         break;
     }
 }
