@@ -2,12 +2,19 @@
 #define ONIX_TTY_H
 #include <onix/type.h>
 
+#define NR_CONSOLES 3 /* consoles */
+
 #define VGA_ADDRESS 0xB8000
-#define VGA_LENGTH 2000 //
-#define VGA_SIZE 0x8000 /* 32K: B8000H -> BFFFFH */
+#define VGA_LENGTH 2000        //
+#define VGA_MEMORY_SIZE 0x8000 /* 32K: B8000H -> BFFFFH */
 #define VGA_BLOCK_SIZE 2
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
+#define VGA_ROWS 27
+#define VGA_SIZE (VGA_WIDTH * VGA_HEIGHT)
+
+#define SCROLL_UP 1
+#define SCROLL_DOWN -1
 
 #define COLOR_BLACK 0         // 0000b
 #define COLOR_BLUE 1          // 0001b
@@ -35,8 +42,6 @@
 #define CURSOR_H 0xE        /* reg index of cursor position (MSB) */
 #define CURSOR_L 0xF        /* reg index of cursor position (LSB) */
 
-#define NR_CONSOLES 3 /* consoles */
-
 #define TTY_IN_BYTES 256 /* tty input queue size */
 
 typedef struct Console
@@ -63,6 +68,9 @@ extern Console console_table[];
 extern Console *current_console;
 
 void out_char(Console *console, char ch);
+void put_key(TTY *tty, u32 key);
+void put_char(Console *console, char ch);
+void flush(Console *console);
 
 void task_tty();
 bool is_current_console(Console *console);
@@ -74,6 +82,7 @@ void in_process(TTY *tty, u32 key);
 
 void select_console(int index);
 void init_screen(TTY *tty);
+void scroll_screen(Console *console, int direction);
 
 void set_start(int addr);
 u32 get_cursor();

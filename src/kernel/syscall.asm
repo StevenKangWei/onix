@@ -12,10 +12,6 @@ halt:
     hlt
     jmp halt
 
-global hang
-hang:
-    jmp short hang
-
 _NR_get_ticks       equ 0
 INT_VECTOR_SYS_CALL equ 0x90
 

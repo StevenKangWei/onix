@@ -17,6 +17,7 @@ u32 kernel_reenter;
 void init_kernel()
 {
 #ifndef ONIX_DEBUG
+    current_console = NULL;
     clear();
 #endif
     printf("Initializing...\n\0");
@@ -39,9 +40,8 @@ void enter_kernel()
 
     init_clock();
     init_keyboard();
-
     init_processes();
-
+    hang();
     int i = 1;
     while (true)
     {

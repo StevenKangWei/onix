@@ -28,6 +28,8 @@ typedef unsigned long long ulong;
 #define INT_MAX 2147483647
 #define INT_MIN -2147483648
 
+#define NULL ((char *)0)
+
 #include <onix/stdarg.h>
 
 #endif

@@ -8,3 +8,11 @@ int sys_get_ticks()
 {
     return kernel_ticks;
 }
+
+void hang()
+{
+    while (true)
+    {
+
+    }
+}

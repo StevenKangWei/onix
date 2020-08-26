@@ -2,6 +2,7 @@
 #include <onix/keyboard.h>
 #include <onix/io.h>
 #include <onix/stdio.h>
+#include <onix/string.h>
 
 TTY tty_table[NR_CONSOLES];
 Console console_table[NR_CONSOLES];
@@ -10,13 +11,10 @@ Console *current_console;
 void init_screen(TTY *tty)
 {
     int index = tty - tty_table;
-    printf("init screen index %d\n\0", index);
-
     tty->console = console_table + index;
 
-    int vga_size = VGA_SIZE >> 1;
+    int memory_size = VGA_ROWS * VGA_WIDTH;
 
-    int memory_size = vga_size / NR_CONSOLES;
     tty->console->start = index * memory_size;
     tty->console->limit = memory_size;
     tty->console->current = tty->console->start;
@@ -24,7 +22,7 @@ void init_screen(TTY *tty)
 
     if (index == 0)
     {
-        tty->console->cursor = 0;
+        tty->console->cursor = get_cursor();
     }
     else
     {
@@ -57,7 +55,7 @@ void select_console(int index)
         return;
     current_console = console_table + index;
     set_cursor(current_console->cursor);
-    set_start(current_console->start);
+    set_start(current_console->current);
 }
 
 void init_tty(TTY *tty)
@@ -66,6 +64,17 @@ void init_tty(TTY *tty)
     tty->head = tty->tail = tty->buffer;
 
     init_screen(tty);
+}
+
+void put_key(TTY *tty, u32 key)
+{
+    if (tty->count >= TTY_IN_BYTES)
+        return;
+    *(tty->head) = key;
+    tty->head++;
+    if (tty->head == tty->buffer + TTY_IN_BYTES)
+        tty->head = tty->buffer;
+    tty->count++;
 }
 
 void in_process(TTY *tty, u32 key)
@@ -91,19 +100,35 @@ void in_process(TTY *tty, u32 key)
         case UP:
             if ((key & FLAG_SHIFT_L) || (key & FLAG_SHIFT_R))
             {
-                // io_cli();
-                io_outb(CRTC_ADDR_REG, START_ADDR_H);
-                io_outb(CRTC_DATA_REG, ((80 * 15) >> 8) & 0xFF);
-                io_outb(CRTC_ADDR_REG, START_ADDR_L);
-                io_outb(CRTC_DATA_REG, (80 * 15) & 0xFF);
-                // io_sti();
+                scroll_screen(tty->console, SCROLL_DOWN);
             }
             break;
         case DOWN:
             if ((key & FLAG_SHIFT_L) || (key & FLAG_SHIFT_R))
             {
-                /* Shift+Down, do nothing */
+                scroll_screen(tty->console, SCROLL_UP);
             }
+            break;
+        case LEFT:
+            if ((key & FLAG_SHIFT_L) || (key & FLAG_SHIFT_R))
+            {
+                int index = (current_console - console_table) - 1;
+                index %= NR_CONSOLES;
+                select_console(index);
+            }
+            break;
+        case RIGHT:
+            if ((key & FLAG_SHIFT_L) || (key & FLAG_SHIFT_R))
+            {
+                int index = (current_console - console_table) + 1;
+                index %= NR_CONSOLES;
+                select_console(index);
+            }
+        case ENTER:
+            put_key(tty, '\n');
+            break;
+        case BACKSPACE:
+            put_key(tty, '\b');
             break;
         case F1:
         case F2:
@@ -129,13 +154,97 @@ void in_process(TTY *tty, u32 key)
     }
 }
 
-void out_char(Console *console, char ch)
+void put_char(Console *console, char ch)
 {
     volatile char *video = (volatile char *)VGA_ADDRESS + (console->cursor * VGA_BLOCK_SIZE);
     *video++ = ch;
     *video++ = COLOR_DEFAULT;
     console->cursor++;
+}
+
+void out_char(Console *console, char ch)
+{
+    u16 pos = console->cursor;
+    u16 x = pos % VGA_WIDTH;
+    u16 y = pos / VGA_WIDTH;
+
+    switch (ch)
+    {
+    case '\b':
+        x = x >= 1 ? x - 1 : 0;
+        console->cursor = (y * VGA_WIDTH) + x;
+        putchar(' ');
+        console->cursor = (y * VGA_WIDTH) + x;
+        break;
+    case '\r':
+        console->cursor = (y * VGA_WIDTH);
+        break;
+    case '\n':
+        console->cursor = (y + 1) * VGA_WIDTH;
+        while ((console->cursor - console->start) >= console->limit)
+        {
+            scroll(console, 1);
+            console->cursor -= VGA_WIDTH;
+        }
+        break;
+    case '\t':
+        //table
+        break;
+    case '\v':
+        // vertial table
+        break;
+    case '\f':
+        console->cursor = (y + 25) * VGA_WIDTH;
+        while ((console->cursor - console->start) >= console->limit)
+        {
+            scroll(console, 1);
+            console->cursor -= VGA_WIDTH;
+        }
+        break;
+    case '\a':
+        beep();
+        break;
+    default:
+        put_char(console, ch);
+        break;
+    }
+
+    while (console->cursor >= console->current + VGA_SIZE)
+    {
+        scroll_screen(console, SCROLL_DOWN);
+    }
+    flush(console);
+}
+
+void flush(Console *console)
+{
     set_cursor(console->cursor);
+    // set_start(console->start);
+}
+
+void scroll(Console *console, int row)
+{
+    if (row > VGA_HEIGHT)
+        return;
+    u32 start = 0;
+    if (console != NULL)
+    {
+        start = console->start;
+    }
+
+    int length = VGA_WIDTH * VGA_BLOCK_SIZE;
+    int rows = VGA_HEIGHT;
+    if (console != NULL)
+        rows = console->limit / VGA_WIDTH - 1;
+    int i = 0;
+    for (i = 0; i < rows; i++)
+    {
+        volatile char *dest = (volatile char *)VGA_ADDRESS + start + (i * length);
+        volatile char *src = (volatile char *)VGA_ADDRESS + start + ((i + row) * length);
+        memcpy(dest, src, length);
+    }
+    volatile char *dest = (volatile char *)VGA_ADDRESS + start + (i * length);
+    memset(dest, 0, length);
 }
 
 void read_tty(TTY *tty)
@@ -189,4 +298,22 @@ void set_start(int addr)
     io_outb(CRTC_DATA_REG, (addr >> 8) & 0xFF);
     io_outb(CRTC_ADDR_REG, START_ADDR_L);
     io_outb(CRTC_DATA_REG, addr & 0xFF);
+}
+
+void scroll_screen(Console *console, int direction)
+{
+    if (direction == SCROLL_UP)
+    {
+        if (console->current > console->start)
+            console->current -= VGA_WIDTH;
+    }
+    else
+    {
+        if (console->current + VGA_SIZE < console->start + console->limit)
+        {
+            console->current += VGA_WIDTH;
+        }
+    }
+    set_start(console->current);
+    set_cursor(console->cursor);
 }
