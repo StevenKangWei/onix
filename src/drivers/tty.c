@@ -159,6 +159,17 @@ void put_char(Console *console, char ch)
     *video++ = ch;
     *video++ = COLOR_DEFAULT;
     console->cursor++;
+
+    u16 pos = console->cursor;
+    u16 x = pos % VGA_WIDTH;
+    u16 y = pos / VGA_WIDTH;
+    if (y >= VGA_HEIGHT - 1)
+    {
+        scroll(console, 1);
+        y--;
+    }
+    console->cursor = (y * VGA_WIDTH) + x;
+    set_cursor(console->cursor);
 }
 
 void out_char(Console *console, char ch)
@@ -172,7 +183,7 @@ void out_char(Console *console, char ch)
     case '\b':
         x = x >= 1 ? x - 1 : 0;
         console->cursor = (y * VGA_WIDTH) + x;
-        putchar(' ');
+        out_char(console, ' ');
         console->cursor = (y * VGA_WIDTH) + x;
         break;
     case '\r':
@@ -240,33 +251,6 @@ void scroll(Console *console, int row)
     }
     volatile char *dest = (volatile char *)VGA_ADDRESS + (i * length);
     memset(dest, 0, length);
-    // if (row > VGA_HEIGHT)
-    //     return;
-    // u32 start = 0;
-    // // if (console != NULL)
-    // // {
-    // //     start = console->start;
-    // // }
-
-    // int length = VGA_WIDTH * VGA_BLOCK_SIZE;
-    // int rows = VGA_HEIGHT;
-    // // if (console != NULL)
-    // //     rows = console->limit / VGA_WIDTH - 1;
-    // int i = 0;
-    // // io_cli();
-    // for (i = 0; i < rows; i++)
-    // {
-    //     volatile char *dest = (volatile char *)VGA_ADDRESS + start + (i * length);
-    //     volatile char *src = (volatile char *)VGA_ADDRESS + start + ((i + row) * length);
-    //     memcpy(dest, src, length);
-    // }
-    // volatile char *dest = (volatile char *)VGA_ADDRESS + start + (i * length);
-    // memset(dest, 0, length);
-    // // io_sti();
-    // // while (true)
-    // // {
-    // //     /* code */
-    // // }
 }
 
 void read_tty(TTY *tty)

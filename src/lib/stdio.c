@@ -39,7 +39,7 @@ void put(char character, uchar color)
     pos++;
     u16 x = pos % VGA_WIDTH;
     u16 y = pos / VGA_WIDTH;
-    if (y >= VGA_HEIGHT - 2)
+    if (y >= VGA_HEIGHT - 1)
     {
         scroll(NULL, 1);
         y--;
