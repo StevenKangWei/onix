@@ -20,7 +20,7 @@ void test_process_a()
         }
 
         setchar(ch, COLOR_DEFAULT, 75, 0);
-        printf_s("This is process A %d: %d %d\n\0", process_ready->pid, i++, tick);
+        // printf_s("This is process A %d: %d %d\n\0", process_ready->pid, i++, tick);
         // printf_s("This is process A %d: %d %d\n\0", process_ready->pid, i++, tick);
         sleep(5000);
     }
