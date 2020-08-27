@@ -5,6 +5,10 @@
 #include <onix/process.h>
 
 #define NR_SYS_CALL 2
+
+#define SENDING 0x02   /* set when proc trying to send */
+#define RECEIVING 0x04 /* set when proc trying to recv */
+
 typedef void *syscall;
 extern void pause();
 extern void halt();
