@@ -20,6 +20,6 @@ int sys_get_ticks()
 
 int sys_write(char *buffer, int length, Process *process)
 {
-    tty_write(&tty_table[process->tty_index], buffer, buffer);
+    tty_write(&tty_table[process->tty_index], buffer, length);
     return 0;
 }

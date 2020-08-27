@@ -39,11 +39,12 @@ void put(char character, uchar color)
     pos++;
     u16 x = pos % VGA_WIDTH;
     u16 y = pos / VGA_WIDTH;
-    if (y >= VGA_HEIGHT)
+    if (y >= VGA_HEIGHT - 2)
     {
         scroll(NULL, 1);
         y--;
     }
+    pos = (y * VGA_WIDTH) + x;
     set_cursor(pos);
 }
 
@@ -90,10 +91,10 @@ void putchar(char character)
         beep();
         break;
     default:
-        if (current_console != NULL)
-            out_char(current_console, character);
-        else
-            put(character, COLOR_DEFAULT);
+        // if (current_console != NULL)
+        //     out_char(current_console, character);
+        // else
+        put(character, COLOR_DEFAULT);
         break;
     }
 }
@@ -117,44 +118,44 @@ void print(const char *string)
     }
 }
 
-int vsprintf(char *buffer, const char *fmt, va_list args)
+int vsprintf(char *buffer, const char *format, va_list args)
 {
     char *p;
     char tmp[256];
     char *str;
     va_list next = args;
 
-    for (p = buffer; *fmt; fmt++)
+    for (p = buffer; *format; format++)
     {
-        if (*fmt != '%')
+        if (*format != '%')
         {
-            *p++ = *fmt;
+            *p++ = *format;
             continue;
         }
 
-        fmt++;
+        format++;
 
-        switch (*fmt)
+        switch (*format)
         {
         case 'd':
         case 'i':
-            itoa(va_arg(next, int), buffer, 10);
+            itoa(va_arg(next, int), tmp, 10);
             strcpy(p, tmp);
             p += strlen(tmp);
             break;
         case 'u':
-            itoa(va_arg(next, uint), buffer, 10);
+            itoa(va_arg(next, uint), tmp, 10);
             strcpy(p, tmp);
             p += strlen(tmp);
             break;
         case 'o':
-            itoa(va_arg(next, uint), buffer, 8);
+            itoa(va_arg(next, uint), tmp, 8);
             strcpy(p, tmp);
             p += strlen(tmp);
             break;
         case 'x':
         case 'X':
-            itoa(va_arg(next, int), buffer, 16);
+            itoa(va_arg(next, int), tmp, 16);
             strcpy(p, tmp);
             p += strlen(tmp);
             break;
@@ -177,11 +178,10 @@ int vsprintf(char *buffer, const char *fmt, va_list args)
     return (p - buffer);
 }
 
-int printf(const char *format, ...)
+int printf_s(const char *format, ...)
 {
     int i;
     char buffer[1024];
-
     va_list args;
     va_start(args, format);
     va_list next = args;
@@ -189,9 +189,19 @@ int printf(const char *format, ...)
     if (current_console != NULL)
     {
         i = vsprintf(buffer, format, args);
+        printf(buffer);
+        return i;
         write(buffer, i);
         return i;
     }
+}
+
+int printf(const char *format, ...)
+{
+    char buffer[1024];
+    va_list args;
+    va_start(args, format);
+    va_list next = args;
 
     for (; *format != '\0'; format++)
     {

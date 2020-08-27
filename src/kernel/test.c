@@ -20,8 +20,9 @@ void test_process_a()
         }
 
         setchar(ch, COLOR_DEFAULT, 75, 0);
-        // printf("This is process A %d: %d %d\n\0", process_ready->pid, i++, tick);
-        sleep(1000);
+        printf_s("This is process A %d: %d %d\n\0", process_ready->pid, i++, tick);
+        // printf_s("This is process A %d: %d %d\n\0", process_ready->pid, i++, tick);
+        sleep(5000);
     }
 }
 
@@ -42,7 +43,6 @@ void test_process_b()
         setchar(ch, COLOR_DEFAULT, 77, 0);
 
         // printf("This is process B %d: %d\n\0", process_ready->pid, i++);
-        // printf("This\n\0");
         sleep(1000);
     }
 }

@@ -48,9 +48,13 @@ void init_processes()
         else
         {
             task = user_task_table + i - 1 - KERNEL_TASK_SIZE;
-            privilege = PRIVILEGE_USER;
-            rpl = RPL_USER;
-            eflags = 0x202;
+            // privilege = PRIVILEGE_USER;
+            // rpl = RPL_USER;
+            // eflags = 0x202;
+
+            privilege = PRIVILEGE_TASK;
+            rpl = RPL_TASK;
+            eflags = 0x1202;
         }
 
         strcpy(process->name, task->name);
