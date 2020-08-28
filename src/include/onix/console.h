@@ -48,9 +48,11 @@ typedef struct Console
 } _packed Console;
 
 void init_console();
+void set_start(u32 addr);
 u32 get_cursor();
 void set_cursor(int pos);
 void set_cursor_coordinate(int x, int y);
+void flush(Console *console);
 
 void out_char(Console *console, char ch);
 

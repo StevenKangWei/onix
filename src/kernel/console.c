@@ -11,6 +11,14 @@ void init_console()
     kconsole.limit = VGA_MEMORY_SIZE / VGA_BLOCK_SIZE;
 }
 
+void set_start(u32 addr)
+{
+    out_byte(CRTC_ADDR_REG, START_ADDR_H);
+    out_byte(CRTC_DATA_REG, (addr >> 8) & 0xFF);
+    out_byte(CRTC_ADDR_REG, START_ADDR_L);
+    out_byte(CRTC_DATA_REG, addr & 0xFF);
+}
+
 u32 get_cursor()
 {
     u32 pos = 0;
@@ -41,5 +49,11 @@ void out_char(Console *console, char ch)
     *video++ = ch;
     *video++ = COLOR_DEFAULT;
     console->cursor++;
+    flush(console);
+}
+
+void flush(Console *console)
+{
     set_cursor(console->cursor);
+    set_start(console->start);
 }
