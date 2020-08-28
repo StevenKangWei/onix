@@ -1,0 +1,28 @@
+###############################################################
+# Configuration file for Bochs
+###############################################################
+display_library: win32, options="gui_debug"
+
+# how much memory the emulated machine will have
+megs: 32
+
+romimage: file="D:\Program Files\Bochs/BIOS-bochs-latest", address=0x00000000, options=none
+vgaromimage: file="D:\Program Files\Bochs/VGABIOS-lgpl-latest"
+
+# what disk images will be used
+floppya: 1_44=onix.img, status=inserted
+
+# choose the boot disk.
+boot: a
+
+# where do we send log messages?
+# log: bochsout.txt
+
+# disable the mouse
+mouse: enabled=0
+
+magic_break: enabled=1
+
+# enable key mapping, using US layout as default.
+keyboard: type=mf, serial_delay=250, paste_delay=100000, user_shortcut=none
+
