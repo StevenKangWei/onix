@@ -73,4 +73,5 @@ int kprintf(const char *format, ...)
     {
         put_char(&kconsole, buffer[i++]);
     }
+    return i;
 }
