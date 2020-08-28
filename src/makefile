@@ -41,7 +41,17 @@ $(BUILD)/kernel.o: $(KERNEL)/kernel.c
 $(BUILD)/io.a: $(KERNEL)/io.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a
+$(BUILD)/mode.a: $(KERNEL)/mode.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
+$(BUILD)/mode.o: $(KERNEL)/mode.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/string.o: $(KERNEL)/string.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a \
+	$(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/string.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
