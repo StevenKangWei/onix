@@ -9,6 +9,9 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 #define VGA_SIZE (VGA_WIDTH * VGA_HEIGHT)
+#define SCAN_X(pos) (pos % VGA_WIDTH)
+#define SCAN_Y(pos) (pos / VGA_WIDTH)
+#define SCAN_POS(x, y) ((y * VGA_WIDTH) + x)
 
 #define SCROLL_UP 1
 #define SCROLL_DOWN -1
@@ -55,6 +58,7 @@ void set_cursor_coordinate(int x, int y);
 void flush(Console *console);
 
 void out_char(Console *console, char ch);
+void put_char(Console *console, char ch);
 
 extern Console kconsole;
 

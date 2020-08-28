@@ -43,6 +43,12 @@ void set_cursor_coordinate(int x, int y)
     set_cursor(pos);
 }
 
+void flush(Console *console)
+{
+    set_cursor(console->cursor);
+    set_start(console->start);
+}
+
 void out_char(Console *console, char ch)
 {
     volatile char *video = (volatile char *)console->start + (console->cursor * VGA_BLOCK_SIZE);
@@ -52,8 +58,38 @@ void out_char(Console *console, char ch)
     flush(console);
 }
 
-void flush(Console *console)
+void put_char(Console *console, char ch)
 {
-    set_cursor(console->cursor);
-    set_start(console->start);
+    u16 x = SCAN_X(console->cursor);
+    u16 y = SCAN_Y(console->cursor);
+
+    switch (ch)
+    {
+    case '\b':
+        x = x >= 1 ? x - 1 : 0;
+        console->cursor = SCAN_POS(x, y);
+        break;
+    case '\r':
+        console->cursor = SCAN_POS(0, y);
+        break;
+    case '\n':
+        console->cursor = SCAN_POS(0, y + 1);
+        break;
+    case '\t':
+        //table
+        break;
+    case '\v':
+        // vertial table
+        break;
+    case '\f':
+        // next page
+        break;
+    case '\a':
+        // beep();
+        break;
+    default:
+        out_char(console, ch);
+        break;
+    }
+    flush(console);
 }

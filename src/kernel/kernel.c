@@ -12,7 +12,8 @@ void init_kernel()
     load_gdt(&gdt_ptr);
 
     init_console();
-    out_char(&kconsole, 'A');
+    put_char(&kconsole, 'A');
+    put_char(&kconsole, '\n');
 }
 
 void enter_kernel()
