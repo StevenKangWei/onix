@@ -39,8 +39,12 @@ void set_cursor(int pos)
 
 void set_cursor_coordinate(int x, int y)
 {
-    int pos = y * VGA_WIDTH + x;
-    set_cursor(pos);
+    set_cursor(get_coordinate_pos(x, y));
+}
+
+u32 get_coordinate_pos(int x, int y)
+{
+    return y * VGA_WIDTH + x;
 }
 
 void flush(Console *console)
@@ -67,7 +71,7 @@ void out_char(Console *console, char ch)
     *video++ = ch;
     *video++ = COLOR_DEFAULT;
     console->cursor++;
-    flush(console);
+    set_cursor(console->cursor);
 }
 
 void setchar(char ch, uchar color, int x, int y)
@@ -84,20 +88,23 @@ void setchar(char ch, uchar color, int x, int y)
 
 void put_char(Console *console, char ch)
 {
-    u16 x = SCAN_X(console->cursor);
-    u16 y = SCAN_Y(console->cursor);
+    u32 cursor = get_cursor();
+    u16 x = cursor % VGA_WIDTH;
+    u16 y = cursor / VGA_WIDTH;
 
     switch (ch)
     {
     case '\b':
         x = x >= 1 ? x - 1 : 0;
-        console->cursor = SCAN_POS(x, y);
+        console->cursor = get_coordinate_pos(x, y);
         break;
     case '\r':
-        console->cursor = SCAN_POS(0, y);
+        set_cursor_coordinate(x, y);
+        console->cursor = get_coordinate_pos(0, y);
         break;
     case '\n':
-        console->cursor = SCAN_POS(0, y + 1);
+        set_cursor_coordinate(x, y);
+        console->cursor = get_coordinate_pos(0, y + 1);
         break;
     case '\t':
         //table

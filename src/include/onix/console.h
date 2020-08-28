@@ -11,7 +11,6 @@
 #define VGA_SIZE (VGA_WIDTH * VGA_HEIGHT)
 #define SCAN_X(pos) (pos % VGA_WIDTH)
 #define SCAN_Y(pos) (pos / VGA_WIDTH)
-#define SCAN_POS(x, y) ((y * VGA_WIDTH) + x)
 
 #define SCROLL_UP 1
 #define SCROLL_DOWN -1
@@ -57,6 +56,7 @@ void set_start(u32 addr);
 u32 get_cursor();
 void set_cursor(int pos);
 void set_cursor_coordinate(int x, int y);
+u32 get_coordinate_pos(int x, int y);
 
 void flush(Console *console);
 void clear(Console *console);
