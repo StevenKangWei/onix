@@ -1,5 +1,6 @@
 #include <onix/mode.h>
 #include <onix/string.h>
+#include <onix/stdio.h>
 
 Pointer gdt_ptr;
 Descriptor gdt[GDT_SIZE];

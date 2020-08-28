@@ -14,7 +14,8 @@ void init_kernel()
 
     init_console();
     clear(&kconsole);
-    kprintf("Hello, world!!!\n\0");
+
+    kprintf("Hello, Onix!!!\n\0");
 }
 
 void enter_kernel()
