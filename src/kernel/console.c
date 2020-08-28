@@ -7,7 +7,7 @@ void init_console()
 {
     kconsole.start = VGA_ADDRESS;
     kconsole.cursor = get_cursor();
-    kconsole.current = kconsole.current;
+    kconsole.current = kconsole.start;
     kconsole.limit = VGA_MEMORY_SIZE / VGA_BLOCK_SIZE;
 }
 
@@ -47,6 +47,18 @@ void flush(Console *console)
 {
     set_cursor(console->cursor);
     set_start(console->start);
+}
+
+void clear(Console *console)
+{
+    console->cursor = 0;
+    for (size_t i = 0; i < console->limit; i++)
+    {
+        out_char(console, ' ');
+    }
+    console->cursor = 0;
+    console->current = console->start;
+    flush(console);
 }
 
 void out_char(Console *console, char ch)

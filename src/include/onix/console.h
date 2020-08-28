@@ -56,6 +56,7 @@ u32 get_cursor();
 void set_cursor(int pos);
 void set_cursor_coordinate(int x, int y);
 void flush(Console *console);
+void clear(Console *console);
 
 void out_char(Console *console, char ch);
 void put_char(Console *console, char ch);
