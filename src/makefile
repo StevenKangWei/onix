@@ -50,8 +50,11 @@ $(BUILD)/mode.o: $(KERNEL)/mode.c
 $(BUILD)/string.o: $(KERNEL)/string.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/console.o: $(KERNEL)/console.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a \
-	$(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/string.o
+	$(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/string.o $(BUILD)/console.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
