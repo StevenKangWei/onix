@@ -49,6 +49,8 @@ typedef struct Console
 
 void init_console();
 u32 get_cursor();
+void set_cursor(int pos);
+void set_cursor_coordinate(int x, int y);
 
 void out_char(Console *console, char ch);
 
