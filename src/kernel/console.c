@@ -70,6 +70,18 @@ void out_char(Console *console, char ch)
     flush(console);
 }
 
+void setchar(char ch, uchar color, int x, int y)
+{
+    if (x < 0 || x >= VGA_WIDTH)
+        return;
+    if (y < 0 || y >= VGA_HEIGHT)
+        return;
+    u16 pos = y * VGA_WIDTH + x;
+    volatile char *video = (volatile char *)VGA_ADDRESS + (pos * VGA_BLOCK_SIZE);
+    *video++ = ch;
+    *video++ = color;
+}
+
 void put_char(Console *console, char ch)
 {
     u16 x = SCAN_X(console->cursor);

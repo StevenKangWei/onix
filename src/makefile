@@ -53,8 +53,18 @@ $(BUILD)/string.o: $(KERNEL)/string.c
 $(BUILD)/console.o: $(KERNEL)/console.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/stdlib.o: $(KERNEL)/stdlib.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/stdio.o: $(KERNEL)/stdio.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD)/test.o: $(KERNEL)/test.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a \
-	$(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/string.o $(BUILD)/console.o
+	$(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/string.o $(BUILD)/console.o \
+	$(BUILD)/stdlib.o $(BUILD)/stdio.o $(BUILD)/test.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin

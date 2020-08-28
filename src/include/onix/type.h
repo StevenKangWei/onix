@@ -30,4 +30,6 @@ typedef unsigned long long ulong;
 
 #define NULL ((char *)0)
 
+#include <onix/stdarg.h>
+
 #endif

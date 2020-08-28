@@ -33,6 +33,8 @@
 #define COLOR_YELLOW 14       // 1110b
 #define COLOR_WHITE 15        // 1111b
 
+#define MAKE_COLOR(back, front) (back << 4 | front)
+
 #define COLOR_DEFAULT (COLOR_BLACK << 4 | COLOR_GRAY)
 
 #define CRTC_ADDR_REG 0x3D4 /* CRT Controller Registers - Addr Register */
@@ -59,6 +61,7 @@ void set_cursor_coordinate(int x, int y);
 void flush(Console *console);
 void clear(Console *console);
 
+void setchar(char ch, uchar color, int x, int y);
 void out_char(Console *console, char ch);
 void put_char(Console *console, char ch);
 
