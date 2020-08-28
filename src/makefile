@@ -24,19 +24,24 @@ LDFLAGS = -m elf_i386 -s -Ttext $(ENTRYPOINT)
 
 .PHONY: image clean qemu bochs
 
+# bootloader
 $(BUILD)/boot.bin: $(BOOT)/boot.asm
 	$(ASM) $(ASM_BIN_FLAGS) -o $@ $<
 
 $(BUILD)/loader.bin: $(BOOT)/loader.asm
 	$(ASM) $(ASM_BIN_FLAGS) -o $@ $<
 
+# kernel start
 $(BUILD)/kernel.a: $(KERNEL)/kernel.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 $(BUILD)/kernel.o: $(KERNEL)/kernel.c
 	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o
+$(BUILD)/io.a: $(KERNEL)/io.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
+$(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
@@ -46,6 +51,8 @@ $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
 	sudo cp $(BUILD)/loader.bin /mnt/floppy -v
 	sudo cp $(BUILD)/kernel.bin /mnt/floppy -v
 	sudo umount /mnt/floppy
+
+# kernel end
 
 image: $(BUILD)/onix.img
 	-
