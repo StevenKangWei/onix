@@ -19,10 +19,8 @@ void init_kernel()
     int i = 1;
     while (true)
     {
-        if (i > 103)
-            continue;
         kprintf("Hello, Onix!!! %d\n\0", i++);
-        kprintf("cursor %d current %d start %d limit %d\n\0",
+        kprintf("%d cursor %d current %d start %d limit %d\n\0", i++,
                 kconsole.cursor, kconsole.current, kconsole.start, kconsole.limit);
         delay(500000);
     }
