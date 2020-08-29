@@ -53,6 +53,12 @@ $(BUILD)/exception.a: $(KERNEL)/exception.asm
 $(BUILD)/exception.o: $(KERNEL)/exception.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/interrupt.a: $(KERNEL)/interrupt.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
+$(BUILD)/interrupt.o: $(KERNEL)/interrupt.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/string.o: $(KERNEL)/string.c
 	$(CC) $(CFLAGS) $< -o $@
 
@@ -74,7 +80,7 @@ $(BUILD)/test.o: $(KERNEL)/test.c
 $(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a \
 	$(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/string.o $(BUILD)/console.o \
 	$(BUILD)/stdlib.o $(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/test.o \
-	$(BUILD)/exception.a $(BUILD)/exception.o
+	$(BUILD)/exception.a $(BUILD)/exception.o $(BUILD)/interrupt.a $(BUILD)/interrupt.o 
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
