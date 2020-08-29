@@ -59,8 +59,10 @@ void scroll(Console *console, int direction)
     }
     else
     {
-        if (console->cursor + VGA_WIDTH >= console->limit)
+        bool flag = true;
+        while (console->cursor + VGA_WIDTH >= console->limit)
         {
+            flag = false;
             int length = VGA_WIDTH * VGA_BLOCK_SIZE;
             int rows = console->limit / VGA_WIDTH;
             int i;
@@ -74,7 +76,7 @@ void scroll(Console *console, int direction)
             memset(dest, 0, length);
             console->cursor -= VGA_WIDTH;
         }
-        else
+        if (flag)
         {
             console->current += VGA_WIDTH;
         }
@@ -109,7 +111,7 @@ void out_char(Console *console, char ch)
     set_cursor(console->cursor);
 }
 
-void setchar(char ch, uchar color, int x, int y)
+void set_char(char ch, uchar color, int x, int y)
 {
     if (x < 0 || x >= VGA_WIDTH)
         return;
@@ -126,19 +128,23 @@ void put_char(Console *console, char ch)
     u32 cursor = get_cursor();
     u16 x = cursor % VGA_WIDTH;
     u16 y = cursor / VGA_WIDTH;
-
+    int i = 0;
     switch (ch)
     {
     case '\b':
         x = x >= 1 ? x - 1 : 0;
         console->cursor = get_coordinate_pos(x, y);
+        set_char(' ', COLOR_DEFAULT, x, y);
         break;
     case '\r':
-        set_cursor_coordinate(x, y);
+        i = x;
+        while (i >= 0)
+        {
+            set_char(' ', COLOR_DEFAULT, i--, y);
+        }
         console->cursor = get_coordinate_pos(0, y);
         break;
     case '\n':
-        set_cursor_coordinate(x, y);
         console->cursor = get_coordinate_pos(0, y + 1);
         break;
     case '\t':
@@ -148,7 +154,7 @@ void put_char(Console *console, char ch)
         // vertial table
         break;
     case '\f':
-        // next page
+        console->cursor = get_coordinate_pos(0, y + 25);
         break;
     case '\a':
         // beep();

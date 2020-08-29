@@ -16,14 +16,8 @@ void init_kernel()
     init_console();
     clear(&kconsole);
 
-    int i = 1;
-    while (true)
-    {
-        kprintf("Hello, Onix!!! %d\n\0", i++);
-        kprintf("%d cursor %d current %d start %d limit %d\n\0", i++,
-                kconsole.cursor, kconsole.current, kconsole.start, kconsole.limit);
-        delay(500000);
-    }
+    kprintf("Hello, Onix!!!\n\0");
+
 }
 
 void enter_kernel()
