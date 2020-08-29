@@ -1,5 +1,6 @@
 #include <onix/console.h>
 #include <onix/io.h>
+#include <onix/stdio.h>
 
 Console kconsole;
 
@@ -8,7 +9,7 @@ void init_console()
     kconsole.start = VGA_ADDRESS;
     kconsole.cursor = get_cursor();
     kconsole.current = kconsole.start;
-    kconsole.limit = VGA_MEMORY_SIZE / VGA_BLOCK_SIZE;
+    kconsole.limit = (VGA_MEMORY_SIZE / VGA_BLOCK_SIZE / VGA_WIDTH) * VGA_WIDTH;
 }
 
 void set_start(u32 addr)
@@ -47,10 +48,33 @@ u32 get_coordinate_pos(int x, int y)
     return y * VGA_WIDTH + x;
 }
 
+void scroll(Console *console, int direction)
+{
+    if (direction == SCROLL_DOWN)
+    {
+        if (console->current > console->start)
+            console->current -= VGA_WIDTH;
+        if (console->current < console->start)
+            console->current = console->start;
+    }
+    else
+    {
+        if (console->current + VGA_WIDTH < (console->start + console->limit))
+        {
+            console->current += VGA_WIDTH;
+        }
+        else
+        {
+            
+        }
+    }
+    flush(console);
+}
+
 void flush(Console *console)
 {
     set_cursor(console->cursor);
-    set_start(console->start);
+    set_start(console->current);
 }
 
 void clear(Console *console)
@@ -122,5 +146,12 @@ void put_char(Console *console, char ch)
         out_char(console, ch);
         break;
     }
+
+    int delta = console->current - console->start;
+    if (console->cursor - delta > VGA_SIZE - VGA_WIDTH)
+    {
+        scroll(console, SCROLL_UP);
+    }
+
     flush(console);
 }

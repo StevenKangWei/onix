@@ -60,6 +60,7 @@ u32 get_coordinate_pos(int x, int y);
 
 void flush(Console *console);
 void clear(Console *console);
+void scroll(Console *console, int direction);
 
 void setchar(char ch, uchar color, int x, int y);
 void out_char(Console *console, char ch);
