@@ -2,6 +2,7 @@
 #include <onix/mode.h>
 #include <onix/console.h>
 #include <onix/stdio.h>
+#include <onix/time.h>
 
 u32 KERNEL_STACK[KERNEL_STACK_SIZE];
 void *KERNEL_STACK_TOP = KERNEL_STACK + KERNEL_STACK_SIZE;
@@ -15,7 +16,11 @@ void init_kernel()
     init_console();
     clear(&kconsole);
 
-    kprintf("Hello, Onix!!! %d\n\0", &gdt_ptr);
+    while (true)
+    {
+        kprintf("Hello, Onix!!! %d\n\0", &gdt_ptr);
+        delay(10000000);
+    }
 }
 
 void enter_kernel()
