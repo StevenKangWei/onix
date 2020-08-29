@@ -74,12 +74,15 @@ $(BUILD)/stdio.o: $(KERNEL)/stdio.c
 $(BUILD)/time.o: $(KERNEL)/time.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/memory.o: $(KERNEL)/memory.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/test.o: $(KERNEL)/test.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a \
 	$(BUILD)/mode.a $(BUILD)/mode.o $(BUILD)/string.o $(BUILD)/console.o \
-	$(BUILD)/stdlib.o $(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/test.o \
+	$(BUILD)/stdlib.o $(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/test.o $(BUILD)/memory.o \
 	$(BUILD)/exception.a $(BUILD)/exception.o  $(BUILD)/interrupt.a $(BUILD)/interrupt.o 
 	$(LD) $(LDFLAGS) $^ -o $@
 
