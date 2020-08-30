@@ -12,7 +12,7 @@ void test_process_a()
     {
         ticks = get_ticks();
         kprintf("This is process A %d %d\n\0", i++, ticks);
-        delay(1000000);
+        delay(1000);
     }
 }
 
@@ -22,7 +22,7 @@ void test_process_b()
     while (true)
     {
         kprintf("This is process B %d\n\0", i++);
-        delay(1000000);
+        delay(1500);
     }
 }
 
@@ -32,6 +32,6 @@ void test_process_c()
     while (true)
     {
         kprintf("This is process C %d\n\0", i++);
-        delay(1000000);
+        delay(3000);
     }
 }
