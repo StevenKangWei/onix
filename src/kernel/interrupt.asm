@@ -20,19 +20,33 @@ global hwint13
 global hwint14
 global hwint15
 
-%macro hwint_master    1
+extern irq_table
+
+%macro hwint_master 1
+    call save
+
+    in al, INT_M_CTLMASK
+    or al, (1 << %1)
+    out INT_M_CTLMASK, al
+
+    mov al, EOI
+    out INT_M_CTL, al
+
+    sti
     push %1
-    call hwint_test_handler
-    add esp, 4
-    iretd
+    call [irq_table + 4 * %1]
+    pop ecx
+    cli
+
+    in al, INT_M_CTLMASK
+    and al, ~(1 << %1)
+    out INT_M_CTLMASK, al
+    ret
 %endmacro
 
 ALIGN   16
-hwint00:    ; Interrupt routine for irq 0 (the clock).
-    inc byte[gs:0]
-    mov al, EOI
-    out INT_M_CTL, al
-    iretd
+hwint00:
+    hwint_master 0
 
 ALIGN   16
 hwint01:    ; Interrupt routine for irq 1 (keyboard)
@@ -101,23 +115,53 @@ ALIGN   16
 hwint15:    ; Interrupt routine for irq 15
     hwint_slave 15
 
-
 extern tss
+extern KERNEL_STACK_TOP
 extern process_ready
-
+extern interrupt_enter
+extern clock_handler
 global _restart
-_restart:
 
+save:
+    ;sub esp, 4
+    pushad
+
+    push ds
+    push es
+    push fs
+    push gs
+
+    mov dx, ss
+    mov ds, dx
+    mov es, dx
+
+    mov eax, esp
+
+    inc dword [interrupt_enter]
+    cmp dword [interrupt_enter], 1
+    jne .1
+
+    mov esp, [KERNEL_STACK_TOP]
+
+    push _restart
+    jmp [eax + RETADR - PROCESS_STACKBASE]
+.1:
+    push reenter
+    jmp [eax + RETADR - PROCESS_STACKBASE]
+
+_restart:
     mov esp, [process_ready]
     lldt [esp + LDT_SELECTOR]
     lea eax, [esp + PROCESS_STACK_TOP]
     mov dword [tss + TSS3_S_SP0], eax
 
+reenter:
+    dec dword [interrupt_enter]
     pop gs
     pop fs
     pop es
     pop ds
+
     popad
     add esp, 4
-
     iretd

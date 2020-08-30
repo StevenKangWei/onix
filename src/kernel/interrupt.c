@@ -2,10 +2,12 @@
 #include <onix/io.h>
 #include <onix/mode.h>
 #include <onix/stdio.h>
+#include <onix/console.h>
 
 Gate idt[IDT_SIZE];
 Pointer idt_ptr;
 int interrupt_enter;
+irq_handler irq_table[IRQ_SIZE];
 
 void init_pic()
 {
@@ -67,6 +69,11 @@ void init_interrupts()
     idt_ptr.limit = IDT_SIZE * sizeof(Gate) - 1;
     idt_ptr.base = (u32)&idt;
     interrupt_enter = 0;
+
+    for (size_t i = 0; i < IRQ_SIZE; i++)
+    {
+        irq_table[i] = hwint_test_handler;
+    }
 }
 
 void init_idt_desc(uchar vector, u8 desc_type, void *handler, uchar privilege)
@@ -82,5 +89,28 @@ void init_idt_desc(uchar vector, u8 desc_type, void *handler, uchar privilege)
 
 void hwint_test_handler(int irq)
 {
-    kprintf("Test interrupt request %d \n\0", irq);
+    set_char('T', COLOR_DEFAULT, 79, 0);
+    // kprintf("Test interrupt request %d \n\0", irq);
+}
+
+void put_irq_handler(int irq, irq_handler handler)
+{
+    disable_irq(irq);
+    irq_table[irq] = handler;
+}
+
+void enable_irq(int irq)
+{
+    if (irq < 8)
+        out_byte(INT_M_CTLMASK, in_byte(INT_M_CTLMASK) & ~(1 << irq));
+    else
+        out_byte(INT_S_CTLMASK, in_byte(INT_S_CTLMASK) & ~(1 << irq));
+}
+
+void disable_irq(int irq)
+{
+    if (irq < 8)
+        out_byte(INT_M_CTLMASK, in_byte(INT_M_CTLMASK) | (1 << irq));
+    else
+        out_byte(INT_S_CTLMASK, in_byte(INT_S_CTLMASK) | (1 << irq));
 }
