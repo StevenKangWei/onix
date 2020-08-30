@@ -3,15 +3,21 @@
 bits 32
 [section .text]
 
-global pause
-pause:
+global sys_pause
+sys_pause:
     sti
     hlt
     ret
 
+global pause
+pause:
+    mov eax, 0
+    int INT_VECTOR_SYS_CALL
+    ret
+
 global get_ticks
 get_ticks:
-    mov eax, 0
+    mov eax, 1
     int INT_VECTOR_SYS_CALL
     ret
 

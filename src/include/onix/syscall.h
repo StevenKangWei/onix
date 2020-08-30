@@ -1,17 +1,21 @@
 #ifndef ONIX_SYSCALL_H
 #define ONIX_SYSCALL_H
 
-#define SYSCALL_SIZE 1
+#define SYSCALL_SIZE 2
 
 #define INT_VECTOR_SYS_CALL 0x90
 
 typedef void *syscall;
 
-extern void pause();
-
+// interactive interrupt
 extern void _syscall();
+
+// kernel mode
+extern void sys_pause();
 int sys_get_ticks();
 
+// user mode
+extern void pause();
 extern int get_ticks();
 
 #endif

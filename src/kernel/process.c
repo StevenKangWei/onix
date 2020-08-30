@@ -5,6 +5,7 @@
 #include <onix/mode.h>
 #include <onix/memory.h>
 #include <onix/interrupt.h>
+#include <onix/syscall.h>
 #include <onix/test.h>
 
 TSS tss;
@@ -145,6 +146,7 @@ void task_idle()
     while (true)
     {
         kprintf("This is process idle\n\0");
+        pause();
         delay(10000000);
     }
 }
