@@ -7,7 +7,7 @@
 #include <onix/interrupt.h>
 #include <onix/test.h>
 
-Process processes[PROCESS_SIZE];
+Process process_table[PROCESS_SIZE];
 Process *process_ready;
 char process_stack[PROCESS_STACK_SIZE_TOTAL];
 TSS tss;
@@ -34,7 +34,7 @@ void init_ldt()
     kprintf("Initilaizing LDT...\n\0");
     init_descriptor(
         &gdt[GDT_INDEX_LDT],
-        vir2phys(seg2phys(SELECTOR_DATA), processes[0].ldt),
+        vir2phys(seg2phys(SELECTOR_DATA), process_table[0].ldt),
         LDT_SIZE * sizeof(Descriptor) - 1,
         DA_LDT);
 }
@@ -43,7 +43,7 @@ void init_processes()
 {
     kprintf("Initializing processes....\n\0");
 
-    Process *process = processes;
+    Process *process = process_table;
     process->selector = SELECTOR_LDT;
 
     memcpy(&process->ldt[0], &gdt[SELECTOR_CODE >> 3], sizeof(Descriptor));
@@ -62,7 +62,7 @@ void init_processes()
     process->frame.eip = (u32)test_process_a;
     process->frame.esp = (u32)(process_stack + PROCESS_STACK_SIZE_TOTAL);
     process->frame.eflags = 0x1202;
-    process_ready = processes;
+    process_ready = process_table;
 
     kprintf("initialized processes!!! %x\n\0", process_ready);
     restart();

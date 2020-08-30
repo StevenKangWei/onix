@@ -72,7 +72,7 @@ typedef struct Process
 } Process;
 
 extern TSS tss;
-extern Process processes[PROCESS_SIZE];
+extern Process process_table[PROCESS_SIZE];
 extern Process *process_ready;
 
 extern char process_stack[PROCESS_STACK_SIZE_TOTAL];
