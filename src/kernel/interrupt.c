@@ -3,6 +3,7 @@
 #include <onix/mode.h>
 #include <onix/stdio.h>
 #include <onix/console.h>
+#include <onix/syscall.h>
 
 Gate idt[IDT_SIZE];
 Pointer idt_ptr;
@@ -65,6 +66,8 @@ void init_interrupts()
     init_idt_desc(INT_VECTOR_IRQ8 + 5, DA_386IGate, hwint13, PRIVILEGE_KERNEL);
     init_idt_desc(INT_VECTOR_IRQ8 + 6, DA_386IGate, hwint14, PRIVILEGE_KERNEL);
     init_idt_desc(INT_VECTOR_IRQ8 + 7, DA_386IGate, hwint15, PRIVILEGE_KERNEL);
+
+    init_idt_desc(INT_VECTOR_SYS_CALL, DA_386IGate, _syscall, PRIVILEGE_USER);
 
     idt_ptr.limit = IDT_SIZE * sizeof(Gate) - 1;
     idt_ptr.base = (u32)&idt;

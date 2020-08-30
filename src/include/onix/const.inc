@@ -35,6 +35,7 @@ INT_M_CTLMASK equ 0x21 ; setting bits in this port disables ints  <Master>
 INT_S_CTL equ 0xA0 ; I/O port for second interrupt controller <Slave>
 INT_S_CTLMASK equ 0xA1 ; setting bits in this port disables ints  <Slave>
 
+INT_VECTOR_SYS_CALL equ 0x90
 
 EOI equ 0x20;
 

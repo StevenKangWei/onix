@@ -119,8 +119,9 @@ extern tss
 extern KERNEL_STACK_TOP
 extern process_ready
 extern interrupt_enter
-extern clock_handler
+
 global _restart
+global save
 
 save:
     ;sub esp, 4
@@ -135,7 +136,7 @@ save:
     mov ds, dx
     mov es, dx
 
-    mov eax, esp
+    mov esi, esp
 
     inc dword [interrupt_enter]
     cmp dword [interrupt_enter], 1
@@ -144,10 +145,10 @@ save:
     mov esp, [KERNEL_STACK_TOP]
 
     push _restart
-    jmp [eax + RETADR - PROCESS_STACKBASE]
+    jmp [esi + RETADR - PROCESS_STACKBASE]
 .1:
     push reenter
-    jmp [eax + RETADR - PROCESS_STACKBASE]
+    jmp [esi + RETADR - PROCESS_STACKBASE]
 
 _restart:
     mov esp, [process_ready]

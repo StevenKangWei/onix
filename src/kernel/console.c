@@ -66,14 +66,17 @@ void scroll(Console *console, int direction)
             int length = VGA_WIDTH * VGA_BLOCK_SIZE;
             int rows = console->limit / VGA_WIDTH;
             int i;
-            for (i = 1; i < rows; i++)
+            for (i = 1; i <= rows; i++)
             {
                 volatile char *dest = (volatile char *)console->start + ((i - 1) * length);
                 volatile char *src = (volatile char *)console->start + (i * length);
                 memcpy(dest, src, length);
             }
-            volatile char *dest = (volatile char *)console->start + (i * length);
-            memset(dest, 0, length);
+            volatile char *dest = (volatile char *)console->start + ((i - 1) * length);
+            for (; dest < i * length; dest++)
+            {
+                *(dest++) = ' ';
+            }
             console->cursor -= VGA_WIDTH;
         }
         if (flag)
@@ -165,7 +168,7 @@ void put_char(Console *console, char ch)
     }
 
     int delta = console->current - console->start;
-    if (console->cursor - delta >= VGA_SIZE - VGA_WIDTH)
+    if (console->cursor - delta >= VGA_SIZE)
     {
         scroll(console, SCROLL_UP);
     }
