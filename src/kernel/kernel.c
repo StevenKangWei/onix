@@ -27,8 +27,7 @@ void init_kernel()
 
     init_tss();
     init_ldt();
-
-    enable_interrupt();
+    load_tss(SELECTOR_TSS);
 }
 
 void enter_kernel()

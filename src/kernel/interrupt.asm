@@ -120,4 +120,4 @@ _restart:
     popad
     add esp, 4
 
-    retd
+    iretd
