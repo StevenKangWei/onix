@@ -21,9 +21,13 @@ void init_clock()
 void clock_handler(int irq)
 {
     kernel_ticks++;
+    process_ready->ticks--;
+
     if (interrupt_enter > 1)
     {
         return;
     }
+    if (process_ready->ticks > 0)
+        return;
     schedule();
 }

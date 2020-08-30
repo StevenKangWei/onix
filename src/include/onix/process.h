@@ -72,6 +72,10 @@ typedef struct Process
     Descriptor ldt[LDT_SIZE]; /* local descriptors for code and data */
     u32 pid;                  /* process id passed in from MM */
     char name[16];            /* name of the process */
+
+    int ticks;
+    int priority;
+
 } Process;
 
 typedef void (*Target)();
@@ -81,6 +85,7 @@ typedef struct Task
     Target init_eip;
     int stack_size;
     char name[32];
+    int priority;
 } _packed Task;
 
 extern TSS tss;
@@ -91,6 +96,9 @@ extern Task kernel_task_table[];
 extern Task user_task_table[];
 
 extern u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
+
+#define process_start process_table
+#define process_end (process_table + PROCESS_SIZE)
 
 extern void _restart();
 void restart();

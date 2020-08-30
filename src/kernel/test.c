@@ -3,6 +3,7 @@
 #include <onix/stdio.h>
 #include <onix/time.h>
 #include <onix/syscall.h>
+#include <onix/process.h>
 
 void test_process_a()
 {
@@ -11,7 +12,7 @@ void test_process_a()
     while (true)
     {
         ticks = get_ticks();
-        kprintf("This is process A %d %d\n\0", i++, ticks);
+        kprintf("This is process A %d %d %d\n\0", i++, ticks, process_ready->pid);
         delay(1000);
     }
 }

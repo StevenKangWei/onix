@@ -14,13 +14,13 @@ Process *process_ready;
 u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 
 Task kernel_task_table[KERNEL_TASK_SIZE] = {
-    {task_idle, PROCESS_STACK_SIZE, "Process idle\0"},
+    {task_idle, PROCESS_STACK_SIZE, "Process idle\0", 5},
 };
 
 Task user_task_table[USER_TASK_SIZE] = {
-    {test_process_a, PROCESS_STACK_SIZE, "Process A\0"},
-    {test_process_b, PROCESS_STACK_SIZE, "Process B\0"},
-    {test_process_c, PROCESS_STACK_SIZE, "Process C\0"},
+    {test_process_a, PROCESS_STACK_SIZE, "Process A\0", 50},
+    {test_process_b, PROCESS_STACK_SIZE, "Process B\0", 50},
+    {test_process_c, PROCESS_STACK_SIZE, "Process C\0", 50},
 };
 
 void init_tss()
@@ -69,19 +69,19 @@ void init_processes()
     u8 rpl;
     int eflags;
 
-    for (size_t i = 1; i <= PROCESS_SIZE; i++)
+    for (size_t i = 0; i < PROCESS_SIZE; i++)
     {
 
-        if (i <= KERNEL_TASK_SIZE)
+        if (i < KERNEL_TASK_SIZE)
         {
-            task = kernel_task_table + i - 1;
+            task = kernel_task_table + i;
             privilege = PRIVILEGE_TASK;
             rpl = RPL_TASK;
             eflags = 0x1202;
         }
         else
         {
-            task = user_task_table + i - 1 - KERNEL_TASK_SIZE;
+            task = user_task_table + i - KERNEL_TASK_SIZE;
             // privilege = PRIVILEGE_USER;
             // rpl = RPL_USER;
             // eflags = 0x202;
@@ -93,6 +93,7 @@ void init_processes()
 
         strcpy(process->name, task->name);
         process->pid = i;
+        process->ticks = process->priority = task->priority;
 
         process->selector = selector;
         memcpy(&process->ldt[0], &gdt[SELECTOR_CODE >> 3], sizeof(Descriptor));
@@ -134,10 +135,24 @@ void restart()
 void schedule()
 {
     Process *process;
-    process_ready++;
-    if (process_ready >= process_table + PROCESS_SIZE)
+    int greatest_ticks = 0;
+
+    while (!greatest_ticks)
     {
-        process_ready = process_table;
+        for (process = process_start; process < process_end; process++)
+        {
+            if (process->ticks > greatest_ticks)
+            {
+                greatest_ticks = process->ticks;
+                process_ready = process;
+            }
+        }
+        if (greatest_ticks > 0)
+            return;
+        for (process = process_start; process < process_end; process++)
+        {
+            process->ticks = process->priority;
+        }
     }
 }
 
@@ -145,8 +160,7 @@ void task_idle()
 {
     while (true)
     {
-        kprintf("This is process idle\n\0");
         pause();
-        delay(10000000);
+        delay(10);
     }
 }
