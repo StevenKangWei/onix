@@ -9,14 +9,26 @@ void test_process_a()
     while (true)
     {
         kprintf("This is process A %d\n\0", i++);
-        delay(10000000);
+        delay(1000000);
     }
 }
 
 void test_process_b()
 {
+    int i = 0;
+    while (true)
+    {
+        kprintf("This is process B %d\n\0", i++);
+        delay(1000000);
+    }
 }
 
 void test_process_c()
 {
+    int i = 0;
+    while (true)
+    {
+        kprintf("This is process C %d\n\0", i++);
+        delay(1000000);
+    }
 }

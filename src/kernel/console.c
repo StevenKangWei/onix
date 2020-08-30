@@ -9,7 +9,7 @@ void init_console()
     kconsole.start = VGA_ADDRESS;
     kconsole.cursor = get_cursor();
     kconsole.current = kconsole.start;
-    kconsole.limit = (VGA_MEMORY_SIZE / VGA_BLOCK_SIZE / VGA_WIDTH) * VGA_WIDTH;
+    kconsole.limit = VGA_SIZE;
 }
 
 void set_start(u32 addr)
@@ -60,7 +60,7 @@ void scroll(Console *console, int direction)
     else
     {
         bool flag = true;
-        while (console->cursor + VGA_WIDTH >= console->limit)
+        while (console->cursor >= console->limit)
         {
             flag = false;
             int length = VGA_WIDTH * VGA_BLOCK_SIZE;
