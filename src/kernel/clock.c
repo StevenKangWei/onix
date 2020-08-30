@@ -25,7 +25,5 @@ void clock_handler(int irq)
     {
         return;
     }
-    process_ready++;
-    if (process_ready >= process_table + PROCESS_SIZE)
-        process_ready = process_table;
+    schedule();
 }
