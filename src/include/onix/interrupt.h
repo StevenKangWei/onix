@@ -38,4 +38,6 @@ extern void hwint13();
 extern void hwint14();
 extern void hwint15();
 
+extern int interrupt_enter;
+
 #endif

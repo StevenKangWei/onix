@@ -89,47 +89,11 @@ typedef struct Gate
     u16 offset_high; /* Offset High */
 } _packed Gate;
 
-typedef struct TSS
-{
-    u32 backlink;
-    u32 esp0; /* stack pointer to use during interrupt */
-    u32 ss0;  /*   "   segment  "  "    "        "     */
-    u32 esp1;
-    u32 ss1;
-    u32 esp2;
-    u32 ss2;
-    u32 cr3;
-    u32 eip;
-    u32 flags;
-    u32 eax;
-    u32 ecx;
-    u32 edx;
-    u32 ebx;
-    u32 esp;
-    u32 ebp;
-    u32 esi;
-    u32 edi;
-    u32 es;
-    u32 cs;
-    u32 ss;
-    u32 ds;
-    u32 fs;
-    u32 gs;
-    u32 ldt;
-    u16 trap;
-    u16 iobase;
-} _packed TSS; // Task State Segment
-
 extern Pointer gdt_ptr;
 extern Descriptor gdt[GDT_SIZE];
 
-extern TSS tss;
-
 void init_gdt();
 void init_descriptor(Descriptor *desc, u32 base, u32 limit, u16 attribute);
-
-void init_tss();
-void init_ldt();
 
 extern void load_gdt(Pointer *gdt_ptr);
 extern void load_idt(Pointer *idt_ptr);

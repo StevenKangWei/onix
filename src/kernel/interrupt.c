@@ -5,6 +5,7 @@
 
 Gate idt[IDT_SIZE];
 Pointer idt_ptr;
+int interrupt_enter;
 
 void init_pic()
 {
@@ -65,6 +66,7 @@ void init_interrupts()
 
     idt_ptr.limit = IDT_SIZE * sizeof(Gate) - 1;
     idt_ptr.base = (u32)&idt;
+    interrupt_enter = 0;
 }
 
 void init_idt_desc(uchar vector, u8 desc_type, void *handler, uchar privilege)

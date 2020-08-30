@@ -4,7 +4,6 @@
 
 Pointer gdt_ptr;
 Descriptor gdt[GDT_SIZE];
-TSS tss;
 
 void init_gdt()
 {

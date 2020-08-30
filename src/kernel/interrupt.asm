@@ -1,4 +1,5 @@
 [section .text]
+%include "onix/const.inc"
 
 extern hwint_test_handler
 
@@ -96,3 +97,24 @@ hwint14:    ; Interrupt routine for irq 14 (AT winchester)
 ALIGN   16
 hwint15:    ; Interrupt routine for irq 15
     hwint_slave 15
+
+
+extern tss
+extern process_ready
+
+global _restart
+_restart:
+
+    mov esp, [process_ready]
+    lldt [esp + LDT_SELECTOR]
+    lea eax, [esp + PROCESS_STACK_TOP]
+    mov dword [tss + TSS3_S_SP0], eax
+
+    pop gs
+    pop fs
+    pop es
+    pop ds
+    popad
+    add esp, 4
+
+    retd
