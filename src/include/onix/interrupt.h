@@ -7,6 +7,7 @@
 
 #define INT_VECTOR_IRQ0 0x20
 #define INT_VECTOR_IRQ8 0x28
+#define INT_VECTOR_SYS_CALL 0x90
 
 /* 8259A interrupt controller ports. */
 #define INT_M_CTL 0x20     /* I/O port for interrupt controller       <Master> */
