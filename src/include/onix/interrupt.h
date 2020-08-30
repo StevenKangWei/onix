@@ -58,7 +58,6 @@ extern void hwint15();
 
 extern int interrupt_enter;
 
-void clock_handler(int irq);
 void put_irq_handler(int irq, irq_handler handler);
 
 extern void enable_irq(int irq);

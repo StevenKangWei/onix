@@ -7,6 +7,7 @@
 #include <onix/exception.h>
 #include <onix/io.h>
 #include <onix/process.h>
+#include <onix/clock.h>
 
 u32 KERNEL_STACK[KERNEL_STACK_SIZE];
 void *KERNEL_STACK_TOP = KERNEL_STACK + KERNEL_STACK_SIZE;
@@ -33,5 +34,6 @@ void init_kernel()
 void enter_kernel()
 {
     kprintf("Hello, Onix!!!\n\0");
+    init_clock();
     init_processes();
 }
