@@ -14,7 +14,7 @@ Process *process_ready;
 u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 
 Task kernel_task_table[KERNEL_TASK_SIZE] = {
-    {task_idle, PROCESS_STACK_SIZE, "Process idle\0", 5},
+    {task_idle, PROCESS_STACK_SIZE, "Process idle\0", 1},
 };
 
 Task user_task_table[USER_TASK_SIZE] = {
@@ -161,6 +161,6 @@ void task_idle()
     while (true)
     {
         pause();
-        delay(10);
+        schedule();
     }
 }

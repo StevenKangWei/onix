@@ -14,6 +14,7 @@ void sleep(int milliseconds)
         if (interval * 1000 / HZ > milliseconds)
             break;
         pause();
+        schedule();
     }
 }
 
