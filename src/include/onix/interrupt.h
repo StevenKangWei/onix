@@ -28,7 +28,7 @@
 #define PRINTER_IRQ 7
 #define AT_WINI_IRQ 14 /* at winchester */
 
-#define EOI 0x20;
+#define EOI 0x20
 
 extern Gate idt[IDT_SIZE];
 extern Pointer idt_ptr;
