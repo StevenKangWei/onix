@@ -29,7 +29,10 @@ global hwint15
 
 ALIGN   16
 hwint00:    ; Interrupt routine for irq 0 (the clock).
-    hwint_master 0
+    inc byte[gs:0]
+    mov al, EOI
+    out INT_M_CTL, al
+    iretd
 
 ALIGN   16
 hwint01:    ; Interrupt routine for irq 1 (keyboard)
