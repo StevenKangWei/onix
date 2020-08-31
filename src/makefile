@@ -74,6 +74,9 @@ $(BUILD)/syscall.o: $(KERNEL)/syscall.c
 $(BUILD)/keyboard.o: $(KERNEL)/keyboard.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/assert.o: $(KERNEL)/assert.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/string.o: $(KERNEL)/string.c
 	$(CC) $(CFLAGS) $< -o $@
 
@@ -100,7 +103,7 @@ $(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a \
 	$(BUILD)/stdlib.o $(BUILD)/stdio.o $(BUILD)/time.o $(BUILD)/test.o $(BUILD)/memory.o \
 	$(BUILD)/exception.a $(BUILD)/exception.o  $(BUILD)/interrupt.a $(BUILD)/interrupt.o \
 	$(BUILD)/process.o $(BUILD)/clock.o $(BUILD)/syscall.a $(BUILD)/syscall.o \
-	$(BUILD)/keyboard.o
+	$(BUILD)/keyboard.o $(BUILD)/assert.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin
