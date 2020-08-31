@@ -18,5 +18,6 @@ void destory_queue(Queue *queue);
 bool queue_empty(Queue *queue);
 void enqueue(Queue *queue, void *data);
 int dequeue(Queue *queue, void *data);
-
+int popqueue(Queue *queue, void *data);
+void clear_queue(Queue *queue);
 #endif

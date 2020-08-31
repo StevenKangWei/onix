@@ -18,7 +18,7 @@ void destory_queue(Queue *queue)
 
 bool queue_empty(Queue *queue)
 {
-    return (queue->size == 0);
+    return (queue->count == 0);
 }
 
 void enqueue(Queue *queue, void *data)
@@ -56,4 +56,27 @@ int dequeue(Queue *queue, void *data)
         queue->tail = queue->buffer;
     }
     return 1;
+}
+
+int popqueue(Queue *queue, void *data)
+{
+    if (queue->count <= 0)
+        return 0;
+
+    memcpy(data, (queue->head - queue->size), queue->size);
+    queue->head -= queue->size;
+    queue->count--;
+
+    if (queue->head < queue->buffer)
+    {
+        queue->head = queue->buffer + queue->length - queue->size;
+    }
+    return 1;
+}
+
+void clear_queue(Queue *queue)
+{
+    queue->count = 0;
+    queue->head = queue->tail = queue->buffer;
+    memset(queue->buffer, 0, queue->length);
 }

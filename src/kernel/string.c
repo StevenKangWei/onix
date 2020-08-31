@@ -36,3 +36,16 @@ void strcpy(char *dest, char *src)
     }
     dest[i] = 0;
 }
+
+int strcmp(const char *str1, const char *str2)
+{
+    while (*str1 == *str2)
+    {
+        assert((str1 != NULL) && (str2 != NULL));
+        if (*str1 == '\0')
+            return 0;
+        str1++;
+        str2++;
+    }
+    return *str1 - *str2;
+}
