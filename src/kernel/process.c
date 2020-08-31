@@ -6,6 +6,7 @@
 #include <onix/memory.h>
 #include <onix/interrupt.h>
 #include <onix/syscall.h>
+#include <onix/tty.h>
 #include <onix/test.h>
 
 TSS tss;
@@ -15,6 +16,7 @@ u32 task_stack[PROCESS_STACK_SIZE_TOTAL];
 
 Task kernel_task_table[KERNEL_TASK_SIZE] = {
     {task_idle, PROCESS_STACK_SIZE, "Process idle\0", 1},
+    {task_tty, PROCESS_STACK_SIZE, "Process tty\0", 20},
 };
 
 Task user_task_table[USER_TASK_SIZE] = {
