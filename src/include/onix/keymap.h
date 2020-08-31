@@ -25,7 +25,7 @@
                or in the list below */
 
 /* Special keys */
-#define ESC (0x01 + FLAG_EXT)       /* Esc  */
+#define KEY_ESC (0x01 + FLAG_EXT)       /* Esc  */
 #define TAB (0x02 + FLAG_EXT)       /* Tab  */
 #define ENTER (0x03 + FLAG_EXT)     /* Enter */
 #define BACKSPACE (0x04 + FLAG_EXT) /* BackSpace */

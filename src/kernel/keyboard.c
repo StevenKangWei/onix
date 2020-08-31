@@ -6,18 +6,19 @@
 #include <onix/assert.h>
 #include <onix/console.h>
 
-KeyQueue keyqueue;
+Queue keyqueue;
+char key_buffer[KEYBOARD_BUFFER_SIZE];
 
-static int KEY_E0 = 0;
-static int KEY_SHIFT_L;
-static int KEY_SHIFT_R;
-static int KEY_ALT_L;
-static int KEY_ALT_R;
-static int KEY_CTRL_L;
-static int KEY_CTRL_R;
-static int KEY_CAPS_LOCK;
-static int KEY_NUM_LOCK;
-static int KEY_SCROLL_LOCK;
+static int STATUS_E0 = 0;
+static int STATUS_SHIFT_L;
+static int STATUS_SHIFT_R;
+static int STATUS_ALT_L;
+static int STATUS_ALT_R;
+static int STATUS_CTRL_L;
+static int STATUS_CTRL_R;
+static int STATUS_CAPS_LOCK;
+static int STATUS_NUM_LOCK;
+static int STATUS_SCROLL_LOCK;
 
 void keyboard_handler(int irq)
 {
@@ -27,31 +28,14 @@ void keyboard_handler(int irq)
         return;
 
     int code = in_byte(KEYBOARD_DATA_PORT);
-
-    *(keyqueue.head) = code;
-
-    keyqueue.head++;
-    if (keyqueue.head == keyqueue.buffer + KEYBOARD_BUFFER_SIZE)
-    {
-        keyqueue.head = keyqueue.buffer;
-    }
-    keyqueue.count++;
-    if (keyqueue.head == keyqueue.tail)
-    {
-        keyqueue.tail++;
-        keyqueue.count--;
-    }
-    if (keyqueue.tail == keyqueue.buffer + KEYBOARD_BUFFER_SIZE)
-    {
-        keyqueue.tail = keyqueue.buffer;
-    }
+    // kprintf("handler %x \n", code);
+    enqueue(&keyqueue, &code);
     assert(keyqueue.count >= 0);
 }
 
 void init_keyboard()
 {
-    keyqueue.count = 0;
-    keyqueue.head = keyqueue.tail = keyqueue.buffer;
+    init_queue(&keyqueue, key_buffer, KEYBOARD_BUFFER_SIZE, sizeof(char));
 
     put_irq_handler(KEYBOARD_IRQ, keyboard_handler);
     enable_irq(KEYBOARD_IRQ);
@@ -59,31 +43,21 @@ void init_keyboard()
 
 char read_code()
 {
-    if (keyqueue.count <= 0)
-        return NULL;
-
-    assert(keyqueue.count > 0);
-
-    char code = *(keyqueue.tail);
-
-    keyqueue.tail++;
-    keyqueue.count--;
-
-    if (keyqueue.tail == keyqueue.buffer + KEYBOARD_BUFFER_SIZE)
-    {
-        keyqueue.tail = keyqueue.buffer;
-    }
-    return code;
+    char code;
+    int success = dequeue(&keyqueue, &code);
+    if (success)
+        return code;
+    return 0;
 }
 
-char read_key()
+int read_key()
 {
     char code;
     bool make;
     u32 *keyrow;
     u32 key = 0;
 
-    KEY_E0 = 0;
+    STATUS_E0 = 0;
 
     code = read_code();
 
@@ -136,7 +110,7 @@ char read_key()
         }
         if (key == 0)
         {
-            KEY_E0 = 1;
+            STATUS_E0 = 1;
         }
     }
 
@@ -147,41 +121,41 @@ char read_key()
         u32 *keyrow = &keymap[index];
 
         int column = 0;
-        if (KEY_SHIFT_L || KEY_SHIFT_R)
+        if (STATUS_SHIFT_L || STATUS_SHIFT_R)
         {
             column = 1;
         }
-        if (KEY_E0)
+        if (STATUS_E0)
         {
             column = 2;
-            KEY_E0 = 0;
+            STATUS_E0 = 0;
         }
 
         u32 key = keyrow[column];
         switch (key)
         {
         case SHIFT_L:
-            KEY_SHIFT_L = make;
+            STATUS_SHIFT_L = make;
             key = 0;
             break;
         case SHIFT_R:
-            KEY_SHIFT_R = make;
+            STATUS_SHIFT_R = make;
             key = 0;
             break;
         case CTRL_L:
-            KEY_CTRL_L = make;
+            STATUS_CTRL_L = make;
             key = 0;
             break;
         case CTRL_R:
-            KEY_CTRL_R = make;
+            STATUS_CTRL_R = make;
             key = 0;
             break;
         case ALT_L:
-            KEY_ALT_L = make;
+            STATUS_ALT_L = make;
             key = 0;
             break;
         case ALT_R:
-            KEY_ALT_R = make;
+            STATUS_ALT_R = make;
             key = 0;
             break;
         default:
@@ -189,25 +163,25 @@ char read_key()
         }
         if (make)
         {
-            key |= KEY_SHIFT_L ? FLAG_SHIFT_L : 0;
-            key |= KEY_SHIFT_R ? FLAG_SHIFT_R : 0;
-            key |= KEY_CTRL_L ? FLAG_CTRL_L : 0;
-            key |= KEY_CTRL_R ? FLAG_CTRL_R : 0;
-            key |= KEY_ALT_L ? FLAG_ALT_L : 0;
-            key |= KEY_ALT_R ? FLAG_ALT_R : 0;
+            key |= STATUS_SHIFT_L ? FLAG_SHIFT_L : 0;
+            key |= STATUS_SHIFT_R ? FLAG_SHIFT_R : 0;
+            key |= STATUS_CTRL_L ? FLAG_CTRL_L : 0;
+            key |= STATUS_CTRL_R ? FLAG_CTRL_R : 0;
+            key |= STATUS_ALT_L ? FLAG_ALT_L : 0;
+            key |= STATUS_ALT_R ? FLAG_ALT_R : 0;
             return key;
         }
         return NULL;
     }
 }
 
-void read_keyboard(callback cb)
+void read_keyboard(callback handler)
 {
     if (keyqueue.count <= 0)
         return;
 
-    char key = read_key();
+    int key = read_key();
     if (key == NULL)
         return;
-    cb(key);
+    handler(key);
 }

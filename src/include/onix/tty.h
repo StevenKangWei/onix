@@ -8,6 +8,6 @@ extern char command[TTY_COMMAND_SIZE];
 void task_tty();
 void init_tty();
 
-void key_process(char key);
+void key_handler(int key);
 
 #endif

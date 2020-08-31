@@ -12,7 +12,7 @@ void task_tty()
     init_tty();
     while (true)
     {
-        read_keyboard(key_process);
+        read_keyboard(key_handler);
     }
 }
 
@@ -21,7 +21,7 @@ void init_tty()
     memset(command, 0, TTY_COMMAND_SIZE);
 }
 
-void key_process(char key)
+void key_handler(int key)
 {
     if (!(key & FLAG_EXT))
     {
