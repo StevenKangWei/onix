@@ -22,6 +22,7 @@ static int STATUS_SCROLL_LOCK;
 
 void keyboard_handler(int irq)
 {
+    assert(irq == 1);
     int status = in_byte(KEYBOARD_STATUS_PORT);
     /* Lowest bit of status will be set if buffer is not empty */
     if (!(status & 0x01))
@@ -77,7 +78,7 @@ int read_key()
         }
         if (pausebreak)
         {
-            key = PAUSEBREAK;
+            key = KEY_PAUSEBREAK;
         }
     }
     else if (code == 0xE0)
@@ -91,7 +92,7 @@ int read_key()
             {
                 if (read_code() == 0x37)
                 {
-                    key = PRINTSCREEN;
+                    key = KEY_PRINTSCREEN;
                     make = 1;
                 }
             }
@@ -103,7 +104,7 @@ int read_key()
             {
                 if (read_code() == 0xAA)
                 {
-                    key = PRINTSCREEN;
+                    key = KEY_PRINTSCREEN;
                     make = 0;
                 }
             }
@@ -114,7 +115,7 @@ int read_key()
         }
     }
 
-    if ((key != PAUSEBREAK) && (key != PRINTSCREEN))
+    if ((key != KEY_PAUSEBREAK) && (key != KEY_PRINTSCREEN))
     {
         make = code & FLAG_BREAK ? false : true;
         int index = (code & 0x7F) * MAP_COLS;
@@ -134,27 +135,27 @@ int read_key()
         u32 key = keyrow[column];
         switch (key)
         {
-        case SHIFT_L:
+        case KEY_SHIFT_L:
             STATUS_SHIFT_L = make;
             key = 0;
             break;
-        case SHIFT_R:
+        case KEY_SHIFT_R:
             STATUS_SHIFT_R = make;
             key = 0;
             break;
-        case CTRL_L:
+        case KEY_CTRL_L:
             STATUS_CTRL_L = make;
             key = 0;
             break;
-        case CTRL_R:
+        case KEY_CTRL_R:
             STATUS_CTRL_R = make;
             key = 0;
             break;
-        case ALT_L:
+        case KEY_ALT_L:
             STATUS_ALT_L = make;
             key = 0;
             break;
-        case ALT_R:
+        case KEY_ALT_R:
             STATUS_ALT_R = make;
             key = 0;
             break;

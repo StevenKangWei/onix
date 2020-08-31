@@ -3,6 +3,7 @@
 #include <onix/keyboard.h>
 #include <onix/keymap.h>
 #include <onix/console.h>
+#include <onix/stdio.h>
 #include <onix/string.h>
 
 char command[TTY_COMMAND_SIZE];
@@ -23,23 +24,24 @@ void init_tty()
 
 void key_handler(int key)
 {
-    if (!(key & FLAG_EXT))
+    if (!(key & FLAG_EXT) && key & 0xff)
     {
-        put_char(&kconsole, key);
+        put_char(&kconsole, key & 0xff);
         return;
     }
 
     int code = key & MASK_RAW;
+
     switch (code)
     {
-    case UP:
+    case KEY_UP:
         break;
-    case DOWN:
+    case KEY_DOWN:
         break;
-    case ENTER:
+    case KEY_ENTER:
         put_char(&kconsole, '\n');
         break;
-    case BACKSPACE:
+    case KEY_BACKSPACE:
         put_char(&kconsole, '\b');
         break;
     default:
