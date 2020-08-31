@@ -22,11 +22,11 @@ get_ticks:
     ret
 
 extern syscall_table
-extern save
+extern save_context
 
 global _syscall
 _syscall:
-    call save
+    call save_context
 
     sti
 

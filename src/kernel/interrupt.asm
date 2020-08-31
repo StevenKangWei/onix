@@ -23,7 +23,7 @@ global hwint15
 extern irq_table
 
 %macro hwint_master 1
-    call save
+    call save_context
 
     in al, INT_M_CTLMASK
     or al, (1 << %1)
@@ -42,6 +42,7 @@ extern irq_table
     and al, ~(1 << %1)
     out INT_M_CTLMASK, al
     ret
+
 %endmacro
 
 ALIGN   16
@@ -121,9 +122,9 @@ extern process_ready
 extern interrupt_enter
 
 global _restart
-global save
+global save_context
 
-save:
+save_context:
     ;sub esp, 4
     pushad
 
