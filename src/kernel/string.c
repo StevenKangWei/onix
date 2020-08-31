@@ -1,4 +1,5 @@
 #include <onix/string.h>
+#include <onix/assert.h>
 
 size_t strlen(const char *string)
 {

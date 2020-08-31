@@ -53,7 +53,7 @@ static void execute()
     if (command_queue.count > 1)
     {
         enqueue(&command_queue, &key);
-        if (strcmp(command_queue.buffer, "beep\0") == 0)
+        if (strcmp(command_queue.buffer, "beep\n\0") == 0)
         {
             kprintf("\a\0");
         }

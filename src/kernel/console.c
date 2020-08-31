@@ -1,6 +1,7 @@
 #include <onix/console.h>
 #include <onix/io.h>
 #include <onix/stdio.h>
+#include <onix/audio.h>
 
 Console kconsole;
 
@@ -160,7 +161,7 @@ void put_char(Console *console, char ch)
         console->cursor = get_coordinate_pos(0, y + 25);
         break;
     case '\a':
-        // beep();
+        beep();
         break;
     default:
         out_char(console, ch);

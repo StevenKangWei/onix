@@ -27,6 +27,5 @@ void delay(int milliseconds)
         int interval = current - start;
         if (interval * 1000 / HZ > milliseconds)
             break;
-        schedule();
     }
 }
