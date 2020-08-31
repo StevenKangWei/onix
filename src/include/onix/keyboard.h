@@ -19,6 +19,9 @@ extern KeyQueue keyqueue;
 void keyboard_handler(int irq);
 
 void init_keyboard();
-void read_keyboard();
+
+typedef void (*callback)(char ch);
+
+void read_keyboard(callback cb);
 
 #endif
