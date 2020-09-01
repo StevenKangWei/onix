@@ -16,6 +16,7 @@ u32 ldt_seg_linear(Process *process, int index)
 
 void *va2la(Process *process, void *va) // virtual address
 {
+    assert(process->pid < PROCESS_SIZE);
     u32 seg_base = ldt_seg_linear(process, INDEX_LDT_RW);
     u32 la = seg_base + (u32)va;
     if (process->pid < PROCESS_SIZE)

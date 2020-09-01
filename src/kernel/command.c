@@ -4,12 +4,19 @@
 #include <onix/process.h>
 #include <onix/memory.h>
 #include <onix/syscall.h>
+#include <onix/console.h>
 
+static const char *COMMAND_CLEAR = "clear\n\0";
 static const char *COMMAND_BEEP = "beep\n\0";
 static const char *COMMAND_TEST = "test\n\0";
 
 bool execute(const char *command)
 {
+    if (strcmp(command, COMMAND_CLEAR) == 0)
+    {
+        command_clear();
+        return true;
+    }
     if (strcmp(command, COMMAND_BEEP) == 0)
     {
         command_beep();
@@ -28,9 +35,14 @@ void command_beep()
     kprintf("\a\0");
 }
 
+void command_clear()
+{
+    clear(&kconsole);
+}
+
 void command_test()
 {
-    kprintf("running test command...\n\0");
+    kprintf("------running test command-----\n\0");
     int test = 10;
     kprintf("virtual address of process %x\n\0", process_ready);
 

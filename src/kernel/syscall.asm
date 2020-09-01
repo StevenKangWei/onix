@@ -42,6 +42,7 @@ _syscall:
     push esi
 
     push dword [process_ready]
+
     push edx
     push ecx
     push ebx
@@ -50,6 +51,7 @@ _syscall:
     add esp, 4 * 4
 
     pop esi
+
     mov [esi + EAXREG - PROCESS_STACKBASE], eax
     cli
 

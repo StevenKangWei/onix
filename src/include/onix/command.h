@@ -3,6 +3,7 @@
 
 #include <onix/type.h>
 
+void command_clear();
 void command_beep();
 void command_test();
 bool execute(const char *command);

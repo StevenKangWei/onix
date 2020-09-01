@@ -15,20 +15,25 @@ int sys_get_ticks()
 
 void task_syscall()
 {
+    Message message;
     int i = 0;
     while (true)
     {
-        i++;
-        char ch;
-        if (i % 2 == 0)
-            ch = 'S';
-        else
+        sendrecv(RECEIVE, PEER_ANY, &message);
+        switch (message.type)
         {
-            ch = ' ';
+        case GET_TICKS:
+            set_message_value(&message, kernel_ticks);
+            sendrecv(SEND, message.source, &message);
+            break;
+        case TEST_CALL:
+            set_message_value(&message, kernel_ticks);
+            sendrecv(SEND, message.source, &message);
+            break;
+        default:
+            panic("unknown message type %x from %d\n\0", message.type, message.source);
+            break;
         }
-        int delta = kconsole.current - kconsole.start;
-        set_char(ch, COLOR_DEFAULT, delta + 73, 0);
-        sleep(3000);
     }
 }
 
