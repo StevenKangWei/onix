@@ -76,6 +76,8 @@ typedef struct Process
     int ticks;
     int priority;
 
+    int flags;
+
 } Process;
 
 typedef void (*Target)();
