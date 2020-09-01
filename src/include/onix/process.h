@@ -22,6 +22,11 @@
 #define PEER_ANY (PROCESS_SIZE + 10)
 #define PEER_NONE (PROCESS_SIZE + 20)
 
+/* Process */
+#define PROCESS_SENDING 0x02   /* set when proc trying to send */
+#define PROCESS_RECEIVING 0x04 /* set when proc trying to recv */
+#define PROCESS_DEATH 0x08     /* death process */
+
 typedef struct TSS
 {
     u32 backlink;

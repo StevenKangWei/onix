@@ -110,7 +110,7 @@ int deadlock(int src, int dest)
     Process *process = process_table + dest;
     while (true)
     {
-        if (!(process->flags & SENDING))
+        if (!(process->flags & PROCESS_SENDING))
             return 0;
         if (process->sendto == src)
         {
@@ -144,7 +144,7 @@ int send_message(Process *current, int peer, Message *message)
         panic(">>DEADLOCK<< %s->%s", sender->name, receiver->name);
     }
 
-    if ((receiver->flags & RECEIVING) && /* peer is waiting for the message */
+    if ((receiver->flags & PROCESS_RECEIVING) && /* peer is waiting for the message */
         (receiver->recvfrom == sender->pid ||
          receiver->recvfrom == PEER_ANY))
     {
@@ -154,7 +154,7 @@ int send_message(Process *current, int peer, Message *message)
         memcpy(va2la(receiver, receiver->message), va2la(sender, message), sizeof(Message));
 
         receiver->message = 0;
-        receiver->flags &= ~RECEIVING; /* peer has received the message */
+        receiver->flags &= ~PROCESS_RECEIVING; /* peer has received the message */
         receiver->recvfrom = PEER_NONE;
 
         unblock(receiver);
@@ -170,8 +170,8 @@ int send_message(Process *current, int peer, Message *message)
     }
     else
     { /* peer is not waiting for the message */
-        sender->flags |= SENDING;
-        assert(sender->flags == SENDING);
+        sender->flags |= PROCESS_SENDING;
+        assert(sender->flags == PROCESS_SENDING);
         sender->sendto = peer;
         sender->message = message;
 
@@ -192,7 +192,7 @@ int send_message(Process *current, int peer, Message *message)
 
         block(sender);
 
-        assert(sender->flags == SENDING);
+        assert(sender->flags == PROCESS_SENDING);
         assert(sender->message != 0);
         assert(sender->recvfrom == PEER_NONE);
         assert(sender->sendto == peer);
@@ -252,7 +252,7 @@ int recv_message(Process *current, int src, Message *message)
             assert(recv->recvfrom == PEER_NONE);
             assert(recv->sendto == PEER_NONE);
             assert(recv->sending != 0);
-            assert(from->flags == SENDING);
+            assert(from->flags == PROCESS_SENDING);
             assert(from->message != 0);
             assert(from->recvfrom == PEER_NONE);
             assert(from->sendto == recv->pid);
@@ -265,7 +265,7 @@ int recv_message(Process *current, int src, Message *message)
         */
         from = &process_table[src];
 
-        if ((from->flags & SENDING) &&
+        if ((from->flags & PROCESS_SENDING) &&
             (from->sendto == recv->pid))
         {
             /* Perfect, src is sending a message to
@@ -281,7 +281,7 @@ int recv_message(Process *current, int src, Message *message)
 
             while (process)
             {
-                assert(from->flags & SENDING);
+                assert(from->flags & PROCESS_SENDING);
 
                 if (process->pid == src) /* if process is the one */
                     break;
@@ -295,7 +295,7 @@ int recv_message(Process *current, int src, Message *message)
             assert(recv->recvfrom == PEER_NONE);
             assert(recv->sendto == PEER_NONE);
             assert(recv->sending != 0);
-            assert(from->flags == SENDING);
+            assert(from->flags == PROCESS_SENDING);
             assert(from->message != 0);
             assert(from->recvfrom == PEER_NONE);
             assert(from->sendto == recv->pid);
@@ -332,7 +332,7 @@ int recv_message(Process *current, int src, Message *message)
 
         from->message = 0;
         from->sendto = PEER_NONE;
-        from->flags &= ~SENDING;
+        from->flags &= ~PROCESS_SENDING;
         unblock(from);
     }
     else
@@ -340,14 +340,14 @@ int recv_message(Process *current, int src, Message *message)
         /* Set flags so that recv will not
 		 * be scheduled until it is unblocked.
 		 */
-        recv->flags |= RECEIVING;
+        recv->flags |= PROCESS_RECEIVING;
 
         recv->message = message;
         recv->recvfrom = src;
 
         block(recv);
 
-        assert(recv->flags == RECEIVING);
+        assert(recv->flags == PROCESS_RECEIVING);
         assert(recv->message != 0);
         assert(recv->recvfrom != PEER_NONE);
         assert(recv->sendto == PEER_NONE);
