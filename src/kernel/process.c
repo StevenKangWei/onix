@@ -119,6 +119,14 @@ void init_processes()
 
         kprintf("init process %x task %x %x %x\n\0", process, task->init_eip, stack, eflags);
 
+        process->flags = 0;
+        process->message = 0;
+        process->recvfrom = PEER_NONE;
+        process->sendto = PEER_NONE;
+        process->interrupt_busy = 0;
+        process->sending = 0;
+        process->next = 0;
+
         stack -= task->stack_size;
         process++;
         selector += 1 << 3;

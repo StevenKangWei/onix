@@ -87,8 +87,14 @@ typedef struct Process
     int priority;
 
     int flags;
-
     Message *message;
+    int recvfrom;
+    int sendto;
+
+    int interrupt_busy;
+
+    struct Process *sending;
+    struct Process *next;
 
 } Process;
 
