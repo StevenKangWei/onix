@@ -3,6 +3,7 @@
 
 #include <onix/type.h>
 #include <onix/mode.h>
+#include <onix/message.h>
 
 #define LDT_SIZE 2
 #define KERNEL_TASK_SIZE 2
@@ -78,6 +79,8 @@ typedef struct Process
 
     int flags;
 
+    Message *message;
+
 } Process;
 
 typedef void (*Target)();
@@ -109,6 +112,9 @@ void schedule();
 void init_tss();
 void init_ldt();
 void init_processes();
+
+void block_process(Process *process);
+void unblock_process(Process *process);
 
 void task_idle();
 

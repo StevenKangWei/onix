@@ -86,6 +86,9 @@ $(BUILD)/tty.o: $(KERNEL)/tty.c
 $(BUILD)/command.o: $(KERNEL)/command.c
 	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD)/message.o: $(KERNEL)/message.c
+	$(CC) $(CFLAGS) $< -o $@
+
 $(BUILD)/queue.o: $(KERNEL)/queue.c
 	$(CC) $(CFLAGS) $< -o $@
 
@@ -119,7 +122,7 @@ $(BUILD)/kernel.bin: $(BUILD)/kernel.a $(BUILD)/kernel.o $(BUILD)/io.a \
 	$(BUILD)/exception.a $(BUILD)/exception.o  $(BUILD)/interrupt.a $(BUILD)/interrupt.o \
 	$(BUILD)/process.o $(BUILD)/clock.o $(BUILD)/syscall.a $(BUILD)/syscall.o \
 	$(BUILD)/keyboard.o $(BUILD)/keymap.o $(BUILD)/assert.o $(BUILD)/tty.o \
-	$(BUILD)/queue.o $(BUILD)/audio.o $(BUILD)/command.o
+	$(BUILD)/queue.o $(BUILD)/audio.o $(BUILD)/command.o $(BUILD)/message.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 $(BUILD)/onix.img: $(BUILD)/boot.bin $(BUILD)/loader.bin $(BUILD)/kernel.bin

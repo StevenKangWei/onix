@@ -3,6 +3,7 @@
 #include <onix/stdio.h>
 #include <onix/process.h>
 #include <onix/memory.h>
+#include <onix/syscall.h>
 
 static const char *COMMAND_BEEP = "beep\n\0";
 static const char *COMMAND_TEST = "test\n\0";

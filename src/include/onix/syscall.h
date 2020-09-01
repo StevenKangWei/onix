@@ -9,16 +9,6 @@
 
 typedef void *syscall;
 
-typedef struct Message
-{
-    /* data */
-} Message;
-
-// message
-void reset_message(Message *message);
-void block_process(Process *process);
-void unblock_process(Process *process);
-
 // interactive interrupt
 extern void _syscall();
 

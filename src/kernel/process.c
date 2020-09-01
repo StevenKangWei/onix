@@ -7,6 +7,7 @@
 #include <onix/interrupt.h>
 #include <onix/syscall.h>
 #include <onix/tty.h>
+#include <onix/assert.h>
 #include <onix/test.h>
 
 TSS tss;
@@ -156,6 +157,17 @@ void schedule()
             process->ticks = process->priority;
         }
     }
+}
+
+void block_process(Process *process)
+{
+    assert(process->flags);
+    schedule();
+}
+
+void unblock_process(Process *process)
+{
+    assert(process->flags == 0);
 }
 
 void task_idle()
