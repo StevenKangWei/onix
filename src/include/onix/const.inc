@@ -36,9 +36,11 @@ INT_S_CTL equ 0xA0 ; I/O port for second interrupt controller <Slave>
 INT_S_CTLMASK equ 0xA1 ; setting bits in this port disables ints  <Slave>
 
 INT_VECTOR_SYS_CALL equ 0x90
-SYSCALL_INDEX_PAUSE equ 0x00
-SYSCALL_INDEX_GET_TICKS equ 0x01
-SYSCALL_INDEX_SENDRECV equ 0x02
+
+SYSCALL_INDEX_SENDRECV equ 0x00
+SYSCALL_INDEX_PAUSE equ 0x01
+SYSCALL_INDEX_GET_TICKS equ 0x02
+
 
 EOI equ 0x20;
 

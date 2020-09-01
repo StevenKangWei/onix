@@ -21,6 +21,7 @@ int sys_sendrecv(int type, int peer, Message *message, Process *process);
 extern void pause();
 extern int get_ticks();
 extern int test_syscall();
+extern int get_message_ticks();
 
 // system task
 void task_syscall();

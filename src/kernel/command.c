@@ -4,6 +4,7 @@
 #include <onix/process.h>
 #include <onix/memory.h>
 #include <onix/syscall.h>
+#include <onix/time.h>
 #include <onix/console.h>
 
 static const char *COMMAND_CLEAR = "clear\n\0";
@@ -52,6 +53,11 @@ void command_test()
     void *va = va2la(process_ready, &process_ready);
     kprintf("linear address of process %x\n\0", va);
 
-    int result = test_syscall();
-    kprintf("get test syscall %d \n\0", result);
+    int n = 100;
+    while (n--)
+    {
+        int result = get_message_ticks();
+        kprintf("get message ticks %d \n\0", result);
+        delay(100);
+    }
 }
