@@ -132,7 +132,7 @@ void init_processes()
 
 void restart()
 {
-    interrupt_enter++;
+    interrupt_count++;
     _restart();
 }
 

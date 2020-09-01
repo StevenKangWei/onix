@@ -7,7 +7,7 @@
 
 Gate idt[IDT_SIZE];
 Pointer idt_ptr;
-int interrupt_enter;
+int interrupt_count;
 irq_handler irq_table[IRQ_SIZE];
 
 void init_pic()
@@ -71,7 +71,7 @@ void init_interrupts()
 
     idt_ptr.limit = IDT_SIZE * sizeof(Gate) - 1;
     idt_ptr.base = (u32)&idt;
-    interrupt_enter = 0;
+    interrupt_count = 0;
 
     for (size_t i = 0; i < IRQ_SIZE; i++)
     {

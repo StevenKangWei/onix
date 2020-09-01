@@ -23,7 +23,7 @@ void clock_handler(int irq)
     kernel_ticks++;
     process_ready->ticks--;
 
-    if (interrupt_enter > 1)
+    if (interrupt_count > 1)
     {
         return;
     }

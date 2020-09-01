@@ -57,7 +57,7 @@ extern void hwint13();
 extern void hwint14();
 extern void hwint15();
 
-extern int interrupt_enter;
+extern int interrupt_count;
 
 void put_irq_handler(int irq, irq_handler handler);
 

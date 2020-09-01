@@ -119,7 +119,7 @@ hwint15:    ; Interrupt routine for irq 15
 extern tss
 extern KERNEL_STACK_TOP
 extern process_ready
-extern interrupt_enter
+extern interrupt_count
 
 global _restart
 global save_context
@@ -144,8 +144,8 @@ save_context:
 
     mov esi, esp
 
-    inc dword [interrupt_enter]
-    cmp dword [interrupt_enter], 1
+    inc dword [interrupt_count]
+    cmp dword [interrupt_count], 1
     jne .1
 
     mov esp, [KERNEL_STACK_TOP]
@@ -163,7 +163,7 @@ _restart:
     mov dword [tss + TSS3_S_SP0], eax
 
 reenter:
-    dec dword [interrupt_enter]
+    dec dword [interrupt_count]
     pop gs
     pop fs
     pop es
