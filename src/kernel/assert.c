@@ -7,7 +7,7 @@ void spin(char *name)
     kprintf("\nspinning in %s ...\n\0", name);
     while (1)
     {
-        pause();
+        sys_pause();
     }
 }
 

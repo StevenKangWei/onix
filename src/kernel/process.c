@@ -178,7 +178,7 @@ void task_idle()
 {
     while (true)
     {
-        pause();
+        sys_pause();
         schedule();
     }
 }

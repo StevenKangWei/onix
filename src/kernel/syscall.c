@@ -6,7 +6,7 @@
 #include <onix/console.h>
 #include <onix/time.h>
 
-syscall syscall_table[SYSCALL_SIZE] = {sys_sendrecv, sys_pause};
+syscall syscall_table[SYSCALL_SIZE] = {sys_sendrecv, _sys_pause};
 
 int sys_test_syscall()
 {

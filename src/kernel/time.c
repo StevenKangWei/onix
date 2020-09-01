@@ -13,7 +13,7 @@ void sleep(int milliseconds)
         int interval = current - start;
         if (interval * 1000 / HZ > milliseconds)
             break;
-        pause();
+        sys_pause();
     }
 }
 

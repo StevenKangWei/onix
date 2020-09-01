@@ -3,14 +3,14 @@
 bits 32
 [section .text]
 
-global sys_pause
-sys_pause:
+global _sys_pause
+_sys_pause:
     sti
     hlt
     ret
 
-global pause
-pause:
+global sys_pause
+sys_pause:
     mov eax, SYSCALL_INDEX_PAUSE
     int INT_VECTOR_SYS_CALL
     ret
