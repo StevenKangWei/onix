@@ -8,6 +8,7 @@
 
 static int send_message(Process *current, int dest, Message *message);
 static int recv_message(Process *current, int dest, Message *message);
+
 static void block(Process *process);
 static void unblock(Process *process);
 static int deadlock(int src, int dest);
@@ -93,20 +94,40 @@ int sys_sendrecv(int type, int peer, Message *message, Process *process)
     return 0;
 }
 
-static void block_process(Process *process)
+static void block(Process *process)
 {
     assert(process->flags);
     schedule();
 }
 
-static void unblock_process(Process *process)
+static void unblock(Process *process)
 {
     assert(process->flags == 0);
 }
 
-
 static int deadlock(int src, int dest)
 {
+    Process *process = process_table + dest;
+    while (true)
+    {
+        if (!(process->flags & SENDING))
+            return 0;
+        if (process->sendto == src)
+        {
+            /* print the chain */
+            process = process_table + dest;
+            kprintf("=_=%s \0", process->name);
+            do
+            {
+                assert(process->message);
+                process = process_table + process->sendto;
+                kprintf("->%s", process->name);
+            } while (process != process_table + src);
+            kprintf("=_= \0");
+            return 1;
+        }
+        process = process_table + process->sendto;
+    }
     return 0;
 }
 
