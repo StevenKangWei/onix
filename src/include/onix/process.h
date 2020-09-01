@@ -13,14 +13,14 @@
 #define PROCESS_STACK_SIZE 0x4000
 #define PROCESS_STACK_SIZE_TOTAL (PROCESS_SIZE * PROCESS_STACK_SIZE)
 
-#define INVALID_DRIVER -20
-#define INTERRUPT -10
+#define PEER_INVALID_DRIVER -20
+#define PEER_INTERRUPT -10
 
-#define TASK_IDLE 0
-#define TASK_TTY 1
-#define TASK_SYSCALL 2
-#define TASK_ANY (PROCESS_SIZE + 10)
-#define TASK_NONE (PROCESS_SIZE + 20)
+#define PEER_IDLE 0
+#define PEER_TTY 1
+#define PEER_SYSCALL 2
+#define PEER_ANY (PROCESS_SIZE + 10)
+#define PEER_NONE (PROCESS_SIZE + 20)
 
 typedef struct TSS
 {
@@ -121,9 +121,6 @@ void schedule();
 void init_tss();
 void init_ldt();
 void init_processes();
-
-void block_process(Process *process);
-void unblock_process(Process *process);
 
 void task_idle();
 

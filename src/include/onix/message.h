@@ -67,14 +67,12 @@ enum MessageType
 
 // message
 void reset_message(Message *message);
-int retval_message(Message *message);
+int get_message_value(Message *message);
+void set_message_value(Message *message, int value);
 
 // assembly interrupt
 extern int _sendrecv(int type, int peer, Message *message);
 // wrapper of _sendrecv
 int sendrecv(int type, int peer, Message *message);
-
-// syscall function
-int sys_sendrecv(int type, int peer, Message *message, Process *process);
 
 #endif

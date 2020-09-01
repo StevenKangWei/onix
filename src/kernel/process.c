@@ -160,17 +160,6 @@ void schedule()
     }
 }
 
-void block_process(Process *process)
-{
-    assert(process->flags);
-    schedule();
-}
-
-void unblock_process(Process *process)
-{
-    assert(process->flags == 0);
-}
-
 void task_idle()
 {
     while (true)

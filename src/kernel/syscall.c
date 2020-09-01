@@ -37,6 +37,6 @@ int test_syscall()
     Message message;
     reset_message(&message);
     message.type = TEST_CALL;
-    sendrecv(BOTH, TASK_SYSCALL, &message);
-    return retval_message(&message);
+    sendrecv(BOTH, PEER_SYSCALL, &message);
+    return get_message_value(&message);
 }

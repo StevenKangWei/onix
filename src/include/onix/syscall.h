@@ -15,6 +15,7 @@ extern void _syscall();
 // kernel mode
 extern void sys_pause();
 int sys_get_ticks();
+int sys_sendrecv(int type, int peer, Message *message, Process *process);
 
 // user mode
 extern void pause();
