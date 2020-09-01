@@ -133,9 +133,14 @@ save_context:
     push fs
     push gs
 
+    mov esi, edx; store
+
     mov dx, ss
     mov ds, dx
     mov es, dx
+    mov fs, dx
+
+    mov edx, esi; restore
 
     mov esi, esp
 

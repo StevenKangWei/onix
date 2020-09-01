@@ -11,28 +11,46 @@ sys_pause:
 
 global pause
 pause:
-    mov eax, 0
+    mov eax, SYSCALL_INDEX_PAUSE
     int INT_VECTOR_SYS_CALL
     ret
 
 global get_ticks
 get_ticks:
-    mov eax, 1
+    mov eax, SYSCALL_INDEX_GET_TICKS
+    int INT_VECTOR_SYS_CALL
+    ret
+
+global sendrecv
+sendrecv:
+    mov eax, SYSCALL_INDEX_SENDRECV
+    mov ebx, [esp + 4] ; function
+    mov ecx, [esp + 8] ; src_dest
+    mov edx, [esp + 12] ; message
     int INT_VECTOR_SYS_CALL
     ret
 
 extern syscall_table
 extern save_context
+extern process_ready
 
 global _syscall
 _syscall:
     call save_context
 
     sti
+    push esi
+
+    push dword [process_ready]
+    push edx
+    push ecx
+    push ebx
 
     call [syscall_table + eax * 4]
-    mov [esi + EAXREG - PROCESS_STACKBASE], eax
+    add esp, 4 * 4
 
+    pop esi
+    mov [esi + EAXREG - PROCESS_STACKBASE], eax
     cli
 
     ret
