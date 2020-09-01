@@ -153,17 +153,23 @@ void schedule()
     {
         for (process = process_start; process < process_end; process++)
         {
-            if (process->ticks > greatest_ticks)
+            if (process->flags == 0)
             {
-                greatest_ticks = process->ticks;
-                process_ready = process;
+                if (process->ticks > greatest_ticks)
+                {
+                    greatest_ticks = process->ticks;
+                    process_ready = process;
+                }
             }
         }
-        if (greatest_ticks > 0)
+
+        if (greatest_ticks)
             return;
+
         for (process = process_start; process < process_end; process++)
         {
-            process->ticks = process->priority;
+            if (process->flags == 0)
+                process->ticks = process->priority;
         }
     }
 }
