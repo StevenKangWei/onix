@@ -56,7 +56,7 @@ void command_test()
     int n = 100;
     while (n--)
     {
-        int result = get_message_ticks();
+        int result = sys_get_ticks();
         kprintf("get message ticks %d \n\0", result);
         delay(100);
     }

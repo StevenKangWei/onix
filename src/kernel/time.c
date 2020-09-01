@@ -6,24 +6,23 @@
 
 void sleep(int milliseconds)
 {
-    int start = get_ticks();
+    int start = sys_get_ticks();
     while (true)
     {
-        int current = get_ticks();
+        int current = sys_get_ticks();
         int interval = current - start;
         if (interval * 1000 / HZ > milliseconds)
             break;
         pause();
-        schedule();
     }
 }
 
 void delay(int milliseconds)
 {
-    int start = get_ticks();
+    int start = sys_get_ticks();
     while (true)
     {
-        int current = get_ticks();
+        int current = sys_get_ticks();
         int interval = current - start;
         if (interval * 1000 / HZ > milliseconds)
             break;

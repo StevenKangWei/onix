@@ -15,12 +15,6 @@ pause:
     int INT_VECTOR_SYS_CALL
     ret
 
-global get_ticks
-get_ticks:
-    mov eax, SYSCALL_INDEX_GET_TICKS
-    int INT_VECTOR_SYS_CALL
-    ret
-
 global _sendrecv
 _sendrecv:
     mov eax, SYSCALL_INDEX_SENDRECV

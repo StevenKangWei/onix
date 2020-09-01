@@ -61,7 +61,7 @@ enum MessageType
     HARD_INT = 1,
 
     /* SYS task */
-    MESSAG_GET_TICKS,
+    MESSAGE_GET_TICKS,
     MESSAGE_TEST_CALL,
 };
 

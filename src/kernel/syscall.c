@@ -6,14 +6,9 @@
 #include <onix/console.h>
 #include <onix/time.h>
 
-syscall syscall_table[SYSCALL_SIZE] = {sys_sendrecv, sys_pause, sys_get_ticks};
+syscall syscall_table[SYSCALL_SIZE] = {sys_sendrecv, sys_pause};
 
-int sys_get_ticks()
-{
-    return kernel_ticks;
-}
-
-int test_syscall()
+int sys_test_syscall()
 {
     Message message;
     reset_message(&message);
@@ -22,11 +17,11 @@ int test_syscall()
     return get_message_value(&message);
 }
 
-int get_message_ticks()
+int sys_get_ticks()
 {
     Message message;
     reset_message(&message);
-    message.type = MESSAG_GET_TICKS;
+    message.type = MESSAGE_GET_TICKS;
     sendrecv(BOTH, PEER_SYSCALL, &message);
     return get_message_value(&message);
 }
@@ -40,7 +35,7 @@ void task_syscall()
         sendrecv(RECEIVE, PEER_ANY, &message);
         switch (message.type)
         {
-        case MESSAG_GET_TICKS:
+        case MESSAGE_GET_TICKS:
             set_message_value(&message, kernel_ticks);
             sendrecv(SEND, message.source, &message);
             break;
