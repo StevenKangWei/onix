@@ -6,7 +6,7 @@
 #include <onix/message.h>
 
 #define LDT_SIZE 2
-#define KERNEL_TASK_SIZE 2
+#define KERNEL_TASK_SIZE 3
 #define USER_TASK_SIZE 3
 
 #define PROCESS_SIZE (KERNEL_TASK_SIZE + USER_TASK_SIZE)

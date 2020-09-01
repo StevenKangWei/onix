@@ -20,4 +20,7 @@ int sys_get_ticks();
 extern void pause();
 extern int get_ticks();
 
+// system task
+void task_syscall();
+
 #endif
