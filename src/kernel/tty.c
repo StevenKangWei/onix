@@ -5,6 +5,7 @@
 #include <onix/console.h>
 #include <onix/stdio.h>
 #include <onix/string.h>
+#include <onix/command.h>
 
 TTY tty;
 
@@ -46,17 +47,13 @@ void put_key(char key)
     }
 }
 
-static void execute()
+static void execute_command()
 {
     int key = 0;
     if (tty.queue.count > 1)
     {
         enqueue(&tty.queue, &key);
-        if (strcmp(tty.buffer, "beep\n\0") == 0)
-        {
-            kprintf("\a\0");
-        }
-        else
+        if (!execute(tty.buffer))
         {
             kprintf(tty.buffer);
         }
@@ -83,7 +80,7 @@ void key_handler(int key)
         break;
     case KEY_ENTER:
         put_key('\n');
-        execute();
+        execute_command();
         break;
     case KEY_BACKSPACE:
         put_key('\b');

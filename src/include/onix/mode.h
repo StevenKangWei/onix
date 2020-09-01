@@ -6,6 +6,9 @@
 #define GDT_SIZE 128
 #define LDT_SIZE 2
 
+#define INDEX_LDT_C 0
+#define INDEX_LDT_RW 1
+
 #define DA_DPL0 0x00
 #define DA_DPL1 0x20
 #define DA_DPL2 0x40
