@@ -3,7 +3,7 @@
 
 #include <onix/process.h>
 
-#define SYSCALL_SIZE 2
+#define SYSCALL_SIZE 3
 
 #define INT_VECTOR_SYS_CALL 0x90
 
@@ -19,6 +19,7 @@ int sys_get_ticks();
 // user mode
 extern void pause();
 extern int get_ticks();
+extern int test_syscall();
 
 // system task
 void task_syscall();

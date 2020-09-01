@@ -6,7 +6,7 @@
 #include <onix/console.h>
 #include <onix/time.h>
 
-syscall syscall_table[SYSCALL_SIZE] = {sys_pause, sys_get_ticks};
+syscall syscall_table[SYSCALL_SIZE] = {sys_pause, sys_get_ticks, sys_sendrecv};
 
 int sys_get_ticks()
 {
@@ -30,4 +30,13 @@ void task_syscall()
         set_char(ch, COLOR_DEFAULT, delta + 73, 0);
         sleep(3000);
     }
+}
+
+int test_syscall()
+{
+    Message message;
+    reset_message(&message);
+    message.type = TEST_CALL;
+    sendrecv(BOTH, TASK_SYSCALL, &message);
+    return retval_message(&message);
 }

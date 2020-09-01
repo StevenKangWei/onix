@@ -13,6 +13,15 @@
 #define PROCESS_STACK_SIZE 0x4000
 #define PROCESS_STACK_SIZE_TOTAL (PROCESS_SIZE * PROCESS_STACK_SIZE)
 
+#define INVALID_DRIVER -20
+#define INTERRUPT -10
+
+#define TASK_IDLE 0
+#define TASK_TTY 1
+#define TASK_SYSCALL 2
+#define TASK_ANY (PROCESS_SIZE + 10)
+#define TASK_NONE (PROCESS_SIZE + 20)
+
 typedef struct TSS
 {
     u32 backlink;

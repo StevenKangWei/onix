@@ -21,11 +21,11 @@ get_ticks:
     int INT_VECTOR_SYS_CALL
     ret
 
-global sendrecv
-sendrecv:
+global _sendrecv
+_sendrecv:
     mov eax, SYSCALL_INDEX_SENDRECV
-    mov ebx, [esp + 4] ; function
-    mov ecx, [esp + 8] ; src_dest
+    mov ebx, [esp + 4] ; type send or recv
+    mov ecx, [esp + 8] ; peer
     mov edx, [esp + 12] ; message
     int INT_VECTOR_SYS_CALL
     ret

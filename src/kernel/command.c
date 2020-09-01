@@ -39,4 +39,7 @@ void command_test()
 
     void *va = va2la(process_ready, &process_ready);
     kprintf("linear address of process %x\n\0", va);
+
+    int result = test_syscall();
+    kprintf("get test syscall %d \n\0", result);
 }
