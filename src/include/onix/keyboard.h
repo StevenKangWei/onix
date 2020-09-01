@@ -8,9 +8,16 @@
 
 #define KEYBOARD_BUFFER_SIZE 1024
 
-extern char key_buffer[KEYBOARD_BUFFER_SIZE];
+#define KEYBOARD_LED_CODE 0xED
+#define KEYBOARD_ACK 0xFA
 
-extern Queue keyqueue;
+typedef struct KeyBoard
+{
+    char buffer[KEYBOARD_BUFFER_SIZE];
+    Queue queue;
+} KeyBoard;
+
+extern KeyBoard keyboard;
 
 void keyboard_handler(int irq);
 

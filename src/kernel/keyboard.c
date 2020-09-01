@@ -6,8 +6,11 @@
 #include <onix/assert.h>
 #include <onix/console.h>
 
-Queue keyqueue;
-char key_buffer[KEYBOARD_BUFFER_SIZE];
+KeyBoard keyboard;
+
+static void keyboard_set_leds();
+static void keyboard_wait();
+static void keyboard_ack();
 
 static int STATUS_E0 = 0;
 static int STATUS_SHIFT_L;
@@ -30,13 +33,23 @@ void keyboard_handler(int irq)
 
     int code = in_byte(KEYBOARD_DATA_PORT);
     // kprintf("handler %x \n", code);
-    enqueue(&keyqueue, &code);
-    assert(keyqueue.count >= 0);
+    enqueue(&keyboard.queue, &code);
+    assert(keyboard.queue.count >= 0);
 }
 
 void init_keyboard()
 {
-    init_queue(&keyqueue, key_buffer, KEYBOARD_BUFFER_SIZE, sizeof(char));
+    STATUS_SHIFT_L = 0;
+    STATUS_SHIFT_R = 0;
+    STATUS_ALT_L = 0;
+    STATUS_ALT_R = 0;
+    STATUS_CTRL_L = 0;
+    STATUS_CTRL_R = 0;
+    STATUS_CAPS_LOCK = 0;
+    STATUS_NUM_LOCK = 1;
+    STATUS_SCROLL_LOCK = 0;
+
+    init_queue(&keyboard.queue, keyboard.buffer, KEYBOARD_BUFFER_SIZE, sizeof(char));
 
     put_irq_handler(KEYBOARD_IRQ, keyboard_handler);
     enable_irq(KEYBOARD_IRQ);
@@ -45,7 +58,7 @@ void init_keyboard()
 char read_code()
 {
     char code;
-    int success = dequeue(&keyqueue, &code);
+    int success = dequeue(&keyboard.queue, &code);
     if (success)
         return code;
     return 0;
@@ -122,7 +135,12 @@ int read_key()
         u32 *keyrow = &keymap[index];
 
         int column = 0;
-        if (STATUS_SHIFT_L || STATUS_SHIFT_R)
+        int caps = STATUS_SHIFT_L || STATUS_SHIFT_R;
+        if (STATUS_CAPS_LOCK && (keyrow[0] >= 'a') && (keyrow[0] <= 'z'))
+        {
+            caps = !caps;
+        }
+        if (caps)
         {
             column = 1;
         }
@@ -159,8 +177,101 @@ int read_key()
             STATUS_ALT_R = make;
             key = 0;
             break;
+        case KEY_CAPS_LOCK:
+            if (make)
+            {
+                STATUS_CAPS_LOCK = !STATUS_CAPS_LOCK;
+                keyboard_set_leds();
+            }
+            break;
+        case KEY_NUM_LOCK:
+            if (make)
+            {
+                STATUS_NUM_LOCK = !STATUS_NUM_LOCK;
+                keyboard_set_leds();
+            }
+            break;
+        case KEY_SCROLL_LOCK:
+            if (make)
+            {
+                STATUS_SCROLL_LOCK = !STATUS_SCROLL_LOCK;
+                keyboard_set_leds();
+            }
+            break;
         default:
             break;
+        }
+
+        int pad = 0;
+        if ((key >= KEY_PAD_SLASH) && (key <= KEY_PAD_9))
+        {
+            pad = 1;
+            switch (key)
+            {
+            case KEY_PAD_SLASH:
+                key = '/';
+                break;
+            case KEY_PAD_STAR:
+                key = '*';
+                break;
+            case KEY_PAD_MINUS:
+                key = '-';
+                break;
+            case KEY_PAD_PLUS:
+                key = '+';
+                break;
+            case KEY_PAD_ENTER:
+                key = KEY_ENTER;
+                break;
+            default:
+                if (STATUS_NUM_LOCK && (key >= KEY_PAD_0) && (key <= KEY_PAD_9))
+                {
+                    key = key - KEY_PAD_0 + '0';
+                }
+                else if (STATUS_NUM_LOCK && (key == KEY_PAD_DOT))
+                {
+                    key = '.';
+                }
+                else
+                {
+                    switch (key)
+                    {
+                    case KEY_PAD_HOME:
+                        key = KEY_HOME;
+                        break;
+                    case KEY_PAD_END:
+                        key = KEY_END;
+                        break;
+                    case KEY_PAD_PAGEUP:
+                        key = KEY_PAGEUP;
+                        break;
+                    case KEY_PAD_PAGEDOWN:
+                        key = KEY_PAGEDOWN;
+                        break;
+                    case KEY_PAD_INS:
+                        key = KEY_INSERT;
+                        break;
+                    case KEY_PAD_UP:
+                        key = KEY_UP;
+                        break;
+                    case KEY_PAD_DOWN:
+                        key = KEY_DOWN;
+                        break;
+                    case KEY_PAD_LEFT:
+                        key = KEY_LEFT;
+                        break;
+                    case KEY_PAD_RIGHT:
+                        key = KEY_RIGHT;
+                        break;
+                    case KEY_PAD_DOT:
+                        key = KEY_DELETE;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                break;
+            }
         }
         if (make)
         {
@@ -170,6 +281,7 @@ int read_key()
             key |= STATUS_CTRL_R ? FLAG_CTRL_R : 0;
             key |= STATUS_ALT_L ? FLAG_ALT_L : 0;
             key |= STATUS_ALT_R ? FLAG_ALT_R : 0;
+            key |= pad ? FLAG_PAD : 0;
             return key;
         }
         return NULL;
@@ -178,11 +290,43 @@ int read_key()
 
 void read_keyboard(callback handler)
 {
-    if (keyqueue.count <= 0)
+    if (keyboard.queue.count <= 0)
         return;
 
     int key = read_key();
     if (key == NULL)
         return;
     handler(key);
+}
+
+static void keyboard_wait()
+{
+    u8 var;
+
+    do
+    {
+        var = in_byte(KEYBOARD_STATUS_PORT);
+    } while (var & 0x02);
+}
+
+static void keyboard_ack()
+{
+    u8 var;
+    do
+    {
+        var = in_byte(KEYBOARD_DATA_PORT);
+    } while (var = !KEYBOARD_ACK);
+}
+
+static void keyboard_set_leds()
+{
+    u8 leds = (STATUS_CAPS_LOCK << 2) | (STATUS_NUM_LOCK << 1) | STATUS_SCROLL_LOCK;
+
+    keyboard_wait();
+    out_byte(KEYBOARD_DATA_PORT, KEYBOARD_LED_CODE);
+    keyboard_ack();
+
+    keyboard_wait();
+    out_byte(KEYBOARD_DATA_PORT, leds);
+    keyboard_ack();
 }
