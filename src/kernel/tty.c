@@ -6,8 +6,7 @@
 #include <onix/stdio.h>
 #include <onix/string.h>
 
-Queue command_queue;
-char buffer[TTY_COMMAND_SIZE];
+TTY tty;
 
 void task_tty()
 {
@@ -20,7 +19,7 @@ void task_tty()
 
 void init_tty()
 {
-    init_queue(&command_queue, buffer, TTY_COMMAND_SIZE, sizeof(char));
+    init_queue(&tty.queue, tty.buffer, TTY_COMMAND_SIZE, sizeof(char));
     print_prompt();
 }
 
@@ -31,38 +30,38 @@ void print_prompt()
 
 void put_key(char key)
 {
-    if (key == '\b' && queue_empty(&command_queue))
+    if (key == '\b' && queue_empty(&tty.queue))
     {
         return;
     }
     else if (key == '\b')
     {
         put_char(&kconsole, key);
-        popqueue(&command_queue, &key);
+        popqueue(&tty.queue, &key);
     }
     else
     {
         put_char(&kconsole, key);
-        enqueue(&command_queue, &key);
+        enqueue(&tty.queue, &key);
     }
 }
 
 static void execute()
 {
     int key = 0;
-    if (command_queue.count > 1)
+    if (tty.queue.count > 1)
     {
-        enqueue(&command_queue, &key);
-        if (strcmp(command_queue.buffer, "beep\n\0") == 0)
+        enqueue(&tty.queue, &key);
+        if (strcmp(tty.buffer, "beep\n\0") == 0)
         {
             kprintf("\a\0");
         }
         else
         {
-            kprintf(command_queue.buffer);
+            kprintf(tty.buffer);
         }
     }
-    clear_queue(&command_queue);
+    clear_queue(&tty.queue);
     print_prompt();
 }
 

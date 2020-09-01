@@ -5,8 +5,12 @@
 
 #define TTY_COMMAND_SIZE 256
 
-extern Queue command_queue;
-extern char buffer[TTY_COMMAND_SIZE];
+typedef struct TTY{
+    Queue queue;
+    char buffer[TTY_COMMAND_SIZE];;
+} TTY;
+
+extern TTY tty;
 
 void task_tty();
 void init_tty();
